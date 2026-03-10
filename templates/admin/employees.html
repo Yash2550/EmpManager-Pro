@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+{% block title %}Employees — EmpManager Pro{% endblock %}
+{% block page_title %}Employee Management{% endblock %}
+
+{% block content %}
+<div class="page-actions">
+    <div class="action-left">
+        <form class="search-filter-form" method="GET">
+            <div class="filter-group">
+                <input type="text" name="search" value="{{ search }}" placeholder="Search employees..."
+                    class="form-input">
+                <select name="department" class="form-select">
+                    <option value="">All Departments</option>
+                    {% for dept in departments %}
+                    <option value="{{ dept.id }}" {% if dept_filter==dept.id|string %}selected{% endif %}>{{ dept.name
+                        }}</option>
+                    {% endfor %}
+                </select>
+                <select name="status" class="form-select">
+                    <option value="">All Status</option>
+                    <option value="active" {% if status_filter=='active' %}selected{% endif %}>Active</option>
+                    <option value="inactive" {% if status_filter=='inactive' %}selected{% endif %}>Inactive</option>
+                    <option value="terminated" {% if status_filter=='terminated' %}selected{% endif %}>Terminated
+                    </option>
+                </select>
+                <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-search"></i> Filter</button>
+            </div>
+        </form>
+    </div>
+    <div class="action-right">
+        <a href="{{ url_for('admin.export_employees') }}" class="btn btn-outline btn-sm"><i
+                class="fas fa-file-excel"></i> Export</a>
+        <a href="{{ url_for('admin.add_employee') }}" class="btn btn-primary"><i class="fas fa-plus"></i> Add
+            Employee</a>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <div class="table-wrapper">
+            <table class="data-table" id="employeesTable">
+                <thead>
+                    <tr>
+                        <th>Employee</th>
+                        <th>Emp Code</th>
+                        <th>Department</th>
+                        <th>Designation</th>
+                        <th>Joining Date</th>
+                        <th>Salary</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for emp in employees.items %}
+                    <tr>
+                        <td>
+                            <div class="user-cell">
+                                <div class="avatar-sm">{{ emp.first_name[0] }}{{ emp.last_name[0] }}</div>
+                                <div>
+                                    <strong>{{ emp.full_name }}</strong>
+                                    <small>{{ emp.email }}</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td><span class="code-badge">{{ emp.emp_code }}</span></td>
+                        <td>{{ emp.department.name if emp.department else 'N/A' }}</td>
+                        <td>{{ emp.designation }}</td>
+                        <td>{{ format_date(emp.date_of_joining) }}</td>
+                        <td>{{ format_currency(emp.salary) }}</td>
+                        <td><span
+                                class="badge badge-{{ 'success' if emp.status == 'active' else ('warning' if emp.status == 'inactive' else 'danger') }}">{{
+                                emp.status }}</span></td>
+                        <td>
+                            <div class="action-btns">
+                                <a href="{{ url_for('admin.employee_detail', id=emp.id) }}" class="btn btn-icon btn-sm"
+                                    title="View"><i class="fas fa-eye"></i></a>
+                                <a href="{{ url_for('admin.edit_employee', id=emp.id) }}" class="btn btn-icon btn-sm"
+                                    title="Edit"><i class="fas fa-edit"></i></a>
+                                <a href="{{ url_for('attendance.qr_code', emp_id=emp.id) }}" class="btn btn-icon btn-sm"
+                                    title="QR Code"><i class="fas fa-qrcode"></i></a>
+                                <form method="POST" action="{{ url_for('admin.delete_employee', id=emp.id) }}"
+                                    style="display:inline" onsubmit="return confirm('Terminate this employee?')">
+                                    <button type="submit" class="btn btn-icon btn-sm btn-danger" title="Terminate"><i
+                                            class="fas fa-ban"></i></button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        {% if employees.pages > 1 %}
+        <div class="pagination">
+            {% if employees.has_prev %}
+            <a href="?page={{ employees.prev_num }}&search={{ search }}&department={{ dept_filter }}&status={{ status_filter }}"
+                class="btn btn-sm btn-outline">&laquo; Prev</a>
+            {% endif %}
+            {% for p in employees.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
+            {% if p %}
+            <a href="?page={{ p }}&search={{ search }}&department={{ dept_filter }}&status={{ status_filter }}"
+                class="btn btn-sm {% if p == employees.page %}btn-primary{% else %}btn-outline{% endif %}">{{ p }}</a>
+            {% else %}
+            <span class="pagination-ellipsis">...</span>
+            {% endif %}
+            {% endfor %}
+            {% if employees.has_next %}
+            <a href="?page={{ employees.next_num }}&search={{ search }}&department={{ dept_filter }}&status={{ status_filter }}"
+                class="btn btn-sm btn-outline">Next &raquo;</a>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

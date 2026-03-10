@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}Request Leave — EmpManager Pro{% endblock %}
+{% block page_title %}Request Leave{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h3><i class="fas fa-paper-plane"></i> Submit Leave Request</h3>
+        <a href="{{ url_for('employee.leaves') }}" class="btn btn-outline btn-sm"><i class="fas fa-arrow-left"></i> My
+            Leaves</a>
+    </div>
+    <div class="card-body">
+        <!-- Leave Balances -->
+        <div class="leave-balance-grid" style="margin-bottom: 2rem;">
+            {% for lb in balances %}
+            <div class="leave-balance-card">
+                <h4>{{ lb.leave_type|title }}</h4>
+                <div class="leave-bar">
+                    <div class="leave-bar-fill" style="width: {{ (lb.used / lb.total * 100) if lb.total > 0 else 0 }}%">
+                    </div>
+                </div>
+                <div class="leave-nums">
+                    <span>Remaining: <strong>{{ lb.remaining }}</strong></span>
+                    <span>Used: {{ lb.used }} / {{ lb.total }}</span>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <form method="POST" class="employee-form">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="leave_type">Leave Type *</label>
+                    <select id="leave_type" name="leave_type" required>
+                        <option value="">Select Type</option>
+                        {% for lb in balances %}
+                        <option value="{{ lb.leave_type }}">{{ lb.leave_type|title }} ({{ lb.remaining }} remaining)
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="start_date">From Date *</label>
+                    <input type="date" id="start_date" name="start_date" required>
+                </div>
+                <div class="form-group">
+                    <label for="end_date">To Date *</label>
+                    <input type="date" id="end_date" name="end_date" required>
+                </div>
+                <div class="form-group form-group-full">
+                    <label for="reason">Reason *</label>
+                    <textarea id="reason" name="reason" rows="3" required
+                        placeholder="Please provide a reason for your leave request..."></textarea>
+                </div>
+            </div>
+            <div class="form-actions">
+                <a href="{{ url_for('employee.leaves') }}" class="btn btn-outline">Cancel</a>
+                <button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane"></i> Submit Request</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

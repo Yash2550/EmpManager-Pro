@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Notifications — EmpManager Pro{% endblock %}
+{% block page_title %}Notifications{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-body">
+        {% if notifications %}
+        <div class="notification-list">
+            {% for notif in notifications %}
+            <div class="notification-item {% if not notif.is_read %}unread{% endif %}">
+                <div class="notif-icon notif-{{ notif.type }}">
+                    <i
+                        class="fas {% if notif.type == 'success' %}fa-check-circle{% elif notif.type == 'warning' %}fa-exclamation-triangle{% elif notif.type == 'error' %}fa-times-circle{% else %}fa-info-circle{% endif %}"></i>
+                </div>
+                <div class="notif-content">
+                    <h4>{{ notif.title }}</h4>
+                    <p>{{ notif.message }}</p>
+                    <small>{{ time_since(notif.created_at) }}</small>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state" style="padding: 3rem; text-align: center;">
+            <i class="fas fa-bell-slash" style="font-size: 3rem; color: var(--text-muted); margin-bottom: 1rem;"></i>
+            <h3>No Notifications</h3>
+            <p>You're all caught up!</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

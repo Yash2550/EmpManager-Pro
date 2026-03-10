@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EmpManager Pro — Smart Employee Management Platform</title>
+    <meta name="description"
+        content="Enterprise-grade employee management platform with QR attendance, payroll automation, leave tracking, and performance reviews.">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/landing.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+</head>
+
+<body class="landing-page">
+
+    <!-- ═══ Navbar ═══ -->
+    <nav class="land-nav" id="navbar">
+        <div class="land-nav-inner">
+            <a href="/" class="land-logo">
+                <div class="land-logo-icon"><i class="fas fa-users-cog"></i></div>
+                <span>EmpManager<span class="accent">Pro</span></span>
+            </a>
+            <div class="land-nav-links">
+                <a href="#features">Features</a>
+                <a href="#how-it-works">How It Works</a>
+                <a href="#testimonials">Testimonials</a>
+                <a href="#team">Team</a>
+                <a href="{{ url_for('auth.login') }}" class="land-btn land-btn-primary"><i
+                        class="fas fa-sign-in-alt"></i> Login Portal</a>
+            </div>
+            <button class="land-mobile-menu" id="mobileMenu"><i class="fas fa-bars"></i></button>
+        </div>
+    </nav>
+
+    <!-- ═══ Hero ═══ -->
+    <section class="land-hero">
+        <div class="land-hero-bg">
+            <div class="land-hero-shape shape-1"></div>
+            <div class="land-hero-shape shape-2"></div>
+            <div class="land-hero-shape shape-3"></div>
+            <div class="land-hero-particles" id="particles"></div>
+        </div>
+        <div class="land-hero-grid">
+            <div class="land-hero-text">
+                <div class="land-badge animate-in"><i class="fas fa-rocket"></i> #1 HR Management Platform</div>
+                <h1 class="animate-in delay-1">Manage Your <span class="gradient-text">Workforce</span> Like Never
+                    Before</h1>
+                <p class="animate-in delay-2">Streamline HR operations with AI-powered attendance tracking, automated
+                    payroll, intelligent leave management, and data-driven performance reviews.</p>
+                <div class="land-hero-actions animate-in delay-3">
+                    <a href="{{ url_for('auth.login') }}" class="land-btn land-btn-primary land-btn-lg">
+                        <i class="fas fa-arrow-right"></i> Get Started Free
+                    </a>
+                    <a href="#how-it-works" class="land-btn land-btn-glass land-btn-lg">
+                        <i class="fas fa-play-circle"></i> See How It Works
+                    </a>
+                </div>
+                <div class="land-hero-trust animate-in delay-4">
+                    <div class="trust-avatars">
+                        <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=60&h=60&fit=crop&crop=face"
+                            alt="User">
+                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=60&h=60&fit=crop&crop=face"
+                            alt="User">
+                        <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=60&h=60&fit=crop&crop=face"
+                            alt="User">
+                        <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=60&h=60&fit=crop&crop=face"
+                            alt="User">
+                        <span class="trust-more">+500</span>
+                    </div>
+                    <div class="trust-text">
+                        <div class="trust-stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i
+                                class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
+                        </div>
+                        <span>Trusted by 500+ companies worldwide</span>
+                    </div>
+                </div>
+            </div>
+            <div class="land-hero-image animate-in delay-2">
+                <div class="hero-img-wrapper">
+                    <img src="https://images.unsplash.com/photo-1551434678-e076c223a692?w=600&h=400&fit=crop"
+                        alt="Team using EmpManager Pro" class="hero-main-img">
+                    <div class="hero-float-card float-card-1">
+                        <i class="fas fa-check-circle text-green"></i>
+                        <div><strong>18</strong><small>Present Today</small></div>
+                    </div>
+                    <div class="hero-float-card float-card-2">
+                        <i class="fas fa-chart-line text-blue"></i>
+                        <div><strong>96%</strong><small>Productivity</small></div>
+                    </div>
+                    <div class="hero-float-card float-card-3">
+                        <i class="fas fa-rupee-sign text-purple"></i>
+                        <div><strong>&#8377;17L</strong><small>Payroll</small></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══ Logos / Stats Bar ═══ -->
+    <section class="land-stats-bar">
+        <div class="land-stats-inner">
+            <div class="land-stat-item">
+                <h3 class="counter" data-target="500">0</h3>
+                <p>Companies Trust Us</p>
+            </div>
+            <div class="land-stat-divider"></div>
+            <div class="land-stat-item">
+                <h3 class="counter" data-target="25000">0</h3>
+                <p>Employees Managed</p>
+            </div>
+            <div class="land-stat-divider"></div>
+            <div class="land-stat-item">
+                <h3 class="counter" data-target="99">0</h3>
+                <p>% Uptime SLA</p>
+            </div>
+            <div class="land-stat-divider"></div>
+            <div class="land-stat-item">
+                <h3 class="counter" data-target="4">0</h3>
+                <p>Minute Setup</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══ Features ═══ -->
+    <section class="land-features" id="features">
+        <div class="land-section-header">
+            <span class="land-section-tag">Features</span>
+            <h2>Everything You Need to <span class="gradient-text">Run HR</span></h2>
+            <p>Powerful tools designed to simplify every aspect of workforce management</p>
+        </div>
+        <div class="land-features-grid">
+            <div class="land-feature-card">
+                <div class="feature-card-img">
+                    <img src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=400&h=250&fit=crop"
+                        alt="Attendance">
+                    <div class="feature-card-overlay">
+                        <i class="fas fa-qrcode"></i>
+                    </div>
+                </div>
+                <div class="feature-card-body">
+                    <h3>QR Attendance System</h3>
+                    <p>Unique QR codes per employee. Camera-based scanning for instant check-in/out with real-time
+                        tracking.</p>
+                    <a href="#" class="feature-link">Learn more <i class="fas fa-arrow-right"></i></a>
+                </div>
+            </div>
+            <div class="land-feature-card">
+                <div class="feature-card-img">
+                    <img src="https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=400&h=250&fit=crop"
+                        alt="Payroll">
+                    <div class="feature-card-overlay">
+                        <i class="fas fa-money-bill-wave"></i>
+                    </div>
+                </div>
+                <div class="feature-card-body">
+                    <h3>Automated Payroll</h3>
+                    <p>Auto-calculate HRA, DA, TA, PF, and taxes. Generate payslips and export to Excel with one click.
+                    </p>
+                    <a href="#" class="feature-link">Learn more <i class="fas fa-arrow-right"></i></a>
+                </div>
+            </div>
+            <div class="land-feature-card">
+                <div class="feature-card-img">
+                    <img src="https://images.unsplash.com/photo-1506784983877-45594efa4cbe?w=400&h=250&fit=crop"
+                        alt="Leave Management">
+                    <div class="feature-card-overlay">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                </div>
+                <div class="feature-card-body">
+                    <h3>Leave Management</h3>
+                    <p>Online leave requests with one-click approval. Track casual, sick, earned, and maternity leave
+                        balances.</p>
+                    <a href="#" class="feature-link">Learn more <i class="fas fa-arrow-right"></i></a>
+                </div>
+            </div>
+            <div class="land-feature-card">
+                <div class="feature-card-img">
+                    <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&h=250&fit=crop"
+                        alt="Performance">
+                    <div class="feature-card-overlay">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                </div>
+                <div class="feature-card-body">
+                    <h3>Performance Reviews</h3>
+                    <p>Quarterly evaluations with ratings, goal tracking, and data-driven growth insights for every
+                        employee.</p>
+                    <a href="#" class="feature-link">Learn more <i class="fas fa-arrow-right"></i></a>
+                </div>
+            </div>
+            <div class="land-feature-card">
+                <div class="feature-card-img">
+                    <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=400&h=250&fit=crop"
+                        alt="Employee Portal">
+                    <div class="feature-card-overlay">
+                        <i class="fas fa-users"></i>
+                    </div>
+                </div>
+                <div class="feature-card-body">
+                    <h3>Employee Self-Service</h3>
+                    <p>Personal dashboard for profiles, payslips, leave requests, attendance history, and notifications.
+                    </p>
+                    <a href="#" class="feature-link">Learn more <i class="fas fa-arrow-right"></i></a>
+                </div>
+            </div>
+            <div class="land-feature-card">
+                <div class="feature-card-img">
+                    <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&h=250&fit=crop"
+                        alt="Reports">
+                    <div class="feature-card-overlay">
+                        <i class="fas fa-file-excel"></i>
+                    </div>
+                </div>
+                <div class="feature-card-body">
+                    <h3>Excel Reports & Analytics</h3>
+                    <p>Export employee data, attendance logs, and payroll to professional Excel reports instantly.</p>
+                    <a href="#" class="feature-link">Learn more <i class="fas fa-arrow-right"></i></a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══ How It Works ═══ -->
+    <section class="land-how" id="how-it-works">
+        <div class="land-section-header">
+            <span class="land-section-tag">How It Works</span>
+            <h2>Get Started in <span class="gradient-text">3 Steps</span></h2>
+            <p>From setup to managing your entire workforce — it takes minutes, not months</p>
+        </div>
+        <div class="land-how-grid">
+            <div class="land-how-step">
+                <div class="how-step-num">01</div>
+                <div class="how-step-img">
+                    <img src="https://images.unsplash.com/photo-1553877522-43269d4ea984?w=350&h=220&fit=crop"
+                        alt="Setup">
+                </div>
+                <h3>Set Up Your Company</h3>
+                <p>Add departments, upload employee data, and configure leave policies in minutes.</p>
+            </div>
+            <div class="land-how-step">
+                <div class="how-step-num">02</div>
+                <div class="how-step-img">
+                    <img src="https://images.unsplash.com/photo-1557804506-669a67965ba0?w=350&h=220&fit=crop"
+                        alt="Onboard">
+                </div>
+                <h3>Onboard Employees</h3>
+                <p>Invite employees, generate QR codes, and assign roles with automated welcome flows.</p>
+            </div>
+            <div class="land-how-step">
+                <div class="how-step-num">03</div>
+                <div class="how-step-img">
+                    <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?w=350&h=220&fit=crop"
+                        alt="Manage">
+                </div>
+                <h3>Manage & Grow</h3>
+                <p>Track attendance, process payroll, review performance, and scale your team effortlessly.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══ Showcase (side-by-side) ═══ -->
+    <section class="land-showcase">
+        <div class="land-showcase-row">
+            <div class="showcase-img">
+                <img src="https://images.unsplash.com/photo-1600880292089-90a7e086ee0c?w=550&h=380&fit=crop"
+                    alt="Admin Dashboard">
+                <div class="showcase-img-badge"><i class="fas fa-shield-alt"></i> Admin Panel</div>
+            </div>
+            <div class="showcase-text">
+                <span class="land-section-tag">For Admins</span>
+                <h2>Complete Control at Your Fingertips</h2>
+                <p>Real-time analytics dashboard with department distribution, attendance trends, and employee lifecycle
+                    management. Full CRUD operations with role-based access control.</p>
+                <ul class="showcase-list">
+                    <li><i class="fas fa-check"></i> Interactive charts and analytics</li>
+                    <li><i class="fas fa-check"></i> Department & employee CRUD</li>
+                    <li><i class="fas fa-check"></i> Excel export for all data</li>
+                    <li><i class="fas fa-check"></i> Role-based access control</li>
+                </ul>
+                <a href="{{ url_for('auth.login') }}" class="land-btn land-btn-primary">Explore Admin Panel <i
+                        class="fas fa-arrow-right"></i></a>
+            </div>
+        </div>
+        <div class="land-showcase-row reverse">
+            <div class="showcase-img">
+                <img src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=550&h=380&fit=crop"
+                    alt="HR Management">
+                <div class="showcase-img-badge"><i class="fas fa-user-tie"></i> HR Portal</div>
+            </div>
+            <div class="showcase-text">
+                <span class="land-section-tag">For HR Teams</span>
+                <h2>Streamlined HR Workflows</h2>
+                <p>Process leave requests, generate payroll, and manage performance reviews — all from a unified
+                    dashboard designed for HR professionals.</p>
+                <ul class="showcase-list">
+                    <li><i class="fas fa-check"></i> One-click leave approval</li>
+                    <li><i class="fas fa-check"></i> Automated payroll generation</li>
+                    <li><i class="fas fa-check"></i> Performance review system</li>
+                    <li><i class="fas fa-check"></i> Employee notifications</li>
+                </ul>
+                <a href="{{ url_for('auth.login') }}" class="land-btn land-btn-primary">Explore HR Portal <i
+                        class="fas fa-arrow-right"></i></a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══ Testimonials ═══ -->
+    <section class="land-testimonials" id="testimonials">
+        <div class="land-section-header">
+            <span class="land-section-tag">Testimonials</span>
+            <h2>Loved by <span class="gradient-text">HR Leaders</span></h2>
+            <p>See what our customers say about transforming their HR operations</p>
+        </div>
+        <div class="land-testimonials-grid">
+            <div class="land-testimonial-card">
+                <div class="testimonial-stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i
+                        class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                <p>"EmpManager Pro transformed our HR operations. The QR attendance system alone saved us 10 hours per
+                    week. Absolutely game-changing!"</p>
+                <div class="testimonial-author">
+                    <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?w=60&h=60&fit=crop&crop=face"
+                        alt="Priya">
+                    <div><strong>Priya Sharma</strong><span>HR Director, TechNova</span></div>
+                </div>
+            </div>
+            <div class="land-testimonial-card featured">
+                <div class="testimonial-stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i
+                        class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                <p>"The payroll automation is incredible. What used to take our team 3 days now happens in minutes.
+                    We've reduced errors by 98% since switching."</p>
+                <div class="testimonial-author">
+                    <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=60&h=60&fit=crop&crop=face"
+                        alt="Rahul">
+                    <div><strong>Rahul Verma</strong><span>CEO, InnovateCorp</span></div>
+                </div>
+            </div>
+            <div class="land-testimonial-card">
+                <div class="testimonial-stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i
+                        class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i></div>
+                <p>"Our employees love the self-service portal. They can check payslips, request leaves, and track
+                    attendance without bugging HR. Win-win!"</p>
+                <div class="testimonial-author">
+                    <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=60&h=60&fit=crop&crop=face"
+                        alt="Sneha">
+                    <div><strong>Sneha Kapoor</strong><span>COO, BrightPath</span></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══ Team ═══ -->
+    <section class="land-team" id="team">
+        <div class="land-section-header">
+            <span class="land-section-tag">Our Team</span>
+            <h2>Built by <span class="gradient-text">Experts</span></h2>
+            <p>A passionate team dedicated to making HR simple for everyone</p>
+        </div>
+        <div class="land-team-grid">
+            <div class="land-team-card">
+                <div class="team-card-img">
+                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=300&fit=crop&crop=face"
+                        alt="Aarav">
+                    <div class="team-social">
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                    </div>
+                </div>
+                <h4>Aarav Sharma</h4>
+                <p>CEO & Founder</p>
+            </div>
+            <div class="land-team-card">
+                <div class="team-card-img">
+                    <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=300&h=300&fit=crop&crop=face"
+                        alt="Meera">
+                    <div class="team-social">
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                    </div>
+                </div>
+                <h4>Meera Patel</h4>
+                <p>CTO</p>
+            </div>
+            <div class="land-team-card">
+                <div class="team-card-img">
+                    <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=300&h=300&fit=crop&crop=face"
+                        alt="Vikram">
+                    <div class="team-social">
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                    </div>
+                </div>
+                <h4>Vikram Singh</h4>
+                <p>Lead Developer</p>
+            </div>
+            <div class="land-team-card">
+                <div class="team-card-img">
+                    <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=300&h=300&fit=crop&crop=face"
+                        alt="Anita">
+                    <div class="team-social">
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                    </div>
+                </div>
+                <h4>Anita Desai</h4>
+                <p>Head of Design</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══ CTA ═══ -->
+    <section class="land-cta">
+        <div class="land-cta-inner">
+            <div class="land-cta-bg-shapes">
+                <div class="cta-shape cta-shape-1"></div>
+                <div class="cta-shape cta-shape-2"></div>
+            </div>
+            <h2>Ready to Transform Your HR?</h2>
+            <p>Join 500+ companies already using EmpManager Pro to manage their workforce smarter</p>
+            <div class="land-cta-actions">
+                <a href="{{ url_for('auth.login') }}" class="land-btn land-btn-white land-btn-lg"><i
+                        class="fas fa-sign-in-alt"></i> Access Employee Portal</a>
+                <a href="{{ url_for('auth.register') }}" class="land-btn land-btn-outline-white land-btn-lg"><i
+                        class="fas fa-user-plus"></i> Create Account</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══ Footer ═══ -->
+    <footer class="land-footer">
+        <div class="land-footer-grid">
+            <div class="land-footer-brand">
+                <div class="land-logo">
+                    <div class="land-logo-icon"><i class="fas fa-users-cog"></i></div>
+                    <span>EmpManager<span class="accent">Pro</span></span>
+                </div>
+                <p>Enterprise-grade employee management platform built for modern companies.</p>
+                <div class="land-footer-social">
+                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-github"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+            <div class="land-footer-col">
+                <h4>Product</h4>
+                <a href="#features">Features</a>
+                <a href="#how-it-works">How It Works</a>
+                <a href="#">Pricing</a>
+                <a href="#">Integrations</a>
+            </div>
+            <div class="land-footer-col">
+                <h4>Company</h4>
+                <a href="#team">About Us</a>
+                <a href="#">Careers</a>
+                <a href="#">Blog</a>
+                <a href="#">Contact</a>
+            </div>
+            <div class="land-footer-col">
+                <h4>Support</h4>
+                <a href="#">Help Center</a>
+                <a href="#">Documentation</a>
+                <a href="#">API Reference</a>
+                <a href="#">Status Page</a>
+            </div>
+        </div>
+        <div class="land-footer-bottom">
+            <p>&copy; 2026 EmpManager Pro. All rights reserved.</p>
+            <div class="land-footer-links">
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // ── Navbar scroll effect ──
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('navbar');
+            nav.classList.toggle('scrolled', window.scrollY > 50);
+        });
+
+        // ── Mobile menu ──
+        document.getElementById('mobileMenu')?.addEventListener('click', () => {
+            document.querySelector('.land-nav-links').classList.toggle('open');
+        });
+
+        // ── Animated counters ──
+        const counters = document.querySelectorAll('.counter');
+        const observerC = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const el = entry.target;
+                    const target = +el.dataset.target;
+                    const duration = 2000;
+                    const start = performance.now();
+                    const animate = (now) => {
+                        const progress = Math.min((now - start) / duration, 1);
+                        const eased = 1 - Math.pow(1 - progress, 3);
+                        el.textContent = Math.floor(eased * target).toLocaleString();
+                        if (progress < 1) requestAnimationFrame(animate);
+                        else el.textContent = target.toLocaleString() + (el.closest('.land-stat-item')?.querySelector('p')?.textContent.includes('%') ? '%' : '+');
+                    };
+                    requestAnimationFrame(animate);
+                    observerC.unobserve(el);
+                }
+            });
+        }, { threshold: 0.5 });
+        counters.forEach(c => observerC.observe(c));
+
+        // ── Scroll-reveal animation ──
+        const reveals = document.querySelectorAll('.land-feature-card, .land-how-step, .land-testimonial-card, .land-team-card, .land-showcase-row, .animate-in');
+        const observerR = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('revealed');
+                    observerR.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.15, rootMargin: '0px 0px -50px 0px' });
+        reveals.forEach(el => observerR.observe(el));
+
+        // ── Smooth scroll ──
+        document.querySelectorAll('a[href^="#"]').forEach(a => {
+            a.addEventListener('click', e => {
+                e.preventDefault();
+                const target = document.querySelector(a.getAttribute('href'));
+                if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                document.querySelector('.land-nav-links')?.classList.remove('open');
+            });
+        });
+
+        // ── Tilt effect on feature cards ──
+        document.querySelectorAll('.land-feature-card').forEach(card => {
+            card.addEventListener('mousemove', e => {
+                const rect = card.getBoundingClientRect();
+                const x = (e.clientX - rect.left) / rect.width - 0.5;
+                const y = (e.clientY - rect.top) / rect.height - 0.5;
+                card.style.transform = `perspective(1000px) rotateY(${x * 5}deg) rotateX(${-y * 5}deg) translateY(-8px)`;
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = '';
+            });
+        });
+    </script>
+</body>
+
+</html>

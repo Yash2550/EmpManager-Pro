@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block title %}My Payslip — EmpManager Pro{% endblock %}
+{% block page_title %}My Payslip{% endblock %}
+
+{% block content %}
+<div class="page-actions">
+    <form method="GET" class="inline-form">
+        <select name="month" class="form-select">
+            {% for m_num, m_name in months %}
+            <option value="{{ m_num }}" {% if m_num==month %}selected{% endif %}>{{ m_name }}</option>
+            {% endfor %}
+        </select>
+        <select name="year" class="form-select">
+            {% for y in range(2024, 2028) %}
+            <option value="{{ y }}" {% if y==year %}selected{% endif %}>{{ y }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-filter"></i> View</button>
+    </form>
+</div>
+
+{% if payslip %}
+<div class="payslip-card card">
+    <div class="card-header">
+        <h3><i class="fas fa-file-invoice-dollar"></i> Payslip — {{ months|selectattr('0', 'eq',
+            month)|map(attribute='1')|first }} {{ year }}</h3>
+        <span class="badge badge-{{ 'success' if payslip.status == 'paid' else 'warning' }}">{{ payslip.status }}</span>
+    </div>
+    <div class="card-body">
+        <div class="payslip-header">
+            <div>
+                <h4>{{ employee.full_name }}</h4>
+                <p>{{ employee.emp_code }} &bull; {{ employee.designation }}</p>
+            </div>
+        </div>
+
+        <div class="payslip-grid">
+            <div class="payslip-section earnings">
+                <h4><i class="fas fa-plus-circle"></i> Earnings</h4>
+                <div class="payslip-row"><span>Basic Salary</span><span>{{ format_currency(payslip.basic_salary)
+                        }}</span></div>
+                <div class="payslip-row"><span>HRA</span><span>{{ format_currency(payslip.hra) }}</span></div>
+                <div class="payslip-row"><span>DA</span><span>{{ format_currency(payslip.da) }}</span></div>
+                <div class="payslip-row"><span>TA</span><span>{{ format_currency(payslip.ta) }}</span></div>
+                {% if payslip.bonus %}<div class="payslip-row"><span>Bonus</span><span>{{ format_currency(payslip.bonus)
+                        }}</span></div>{% endif %}
+                <div class="payslip-row payslip-total"><span>Gross Salary</span><span>{{
+                        format_currency(payslip.gross_salary) }}</span></div>
+            </div>
+            <div class="payslip-section deductions">
+                <h4><i class="fas fa-minus-circle"></i> Deductions</h4>
+                <div class="payslip-row"><span>Provident Fund</span><span>{{ format_currency(payslip.pf_deduction)
+                        }}</span></div>
+                <div class="payslip-row"><span>Income Tax</span><span>{{ format_currency(payslip.tax_deduction)
+                        }}</span></div>
+                {% if payslip.other_deductions %}<div class="payslip-row"><span>Other</span><span>{{
+                        format_currency(payslip.other_deductions) }}</span></div>{% endif %}
+                <div class="payslip-row payslip-total"><span>Total Deductions</span><span>{{
+                        format_currency(payslip.pf_deduction + payslip.tax_deduction + payslip.other_deductions)
+                        }}</span></div>
+            </div>
+        </div>
+
+        <div class="payslip-net">
+            <span>Net Salary</span>
+            <span class="net-amount">{{ format_currency(payslip.net_salary) }}</span>
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="card">
+    <div class="card-body text-center" style="padding: 3rem;">
+        <i class="fas fa-file-invoice" style="font-size: 3rem; color: var(--text-muted); margin-bottom: 1rem;"></i>
+        <h3>No Payslip Found</h3>
+        <p>No payslip generated for this period yet.</p>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% block title %}Attendance Report — EmpManager Pro{% endblock %}
+{% block page_title %}Attendance Report{% endblock %}
+
+{% block content %}
+<div class="page-actions">
+    <div class="action-left">
+        <form method="GET" class="inline-form">
+            <input type="date" name="start" value="{{ start }}" class="form-input">
+            <input type="date" name="end" value="{{ end }}" class="form-input">
+            <select name="employee" class="form-select">
+                <option value="">All Employees</option>
+                {% for emp in employees %}
+                <option value="{{ emp.id }}" {% if emp_filter==emp.id|string %}selected{% endif %}>{{ emp.full_name }}
+                </option>
+                {% endfor %}
+            </select>
+            <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-filter"></i> Filter</button>
+        </form>
+    </div>
+    <div class="action-right">
+        <a href="{{ url_for('attendance.export_report', start=start, end=end) }}" class="btn btn-outline btn-sm"><i
+                class="fas fa-file-excel"></i> Export</a>
+    </div>
+</div>
+
+<div class="stats-grid stats-grid-4">
+    <div class="stat-card stat-mini stat-gradient-1">
+        <div class="stat-info">
+            <h3>{{ total_records }}</h3>
+            <p>Total Records</p>
+        </div>
+    </div>
+    <div class="stat-card stat-mini stat-gradient-3">
+        <div class="stat-info">
+            <h3>{{ present_count }}</h3>
+            <p>Present</p>
+        </div>
+    </div>
+    <div class="stat-card stat-mini stat-gradient-6">
+        <div class="stat-info">
+            <h3>{{ absent_count }}</h3>
+            <p>Absent</p>
+        </div>
+    </div>
+    <div class="stat-card stat-mini stat-gradient-5">
+        <div class="stat-info">
+            <h3>{{ avg_hours }}h</h3>
+            <p>Avg Hours</p>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <div class="table-wrapper">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Employee</th>
+                        <th>Date</th>
+                        <th>Check In</th>
+                        <th>Check Out</th>
+                        <th>Hours</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for rec in records %}
+                    <tr>
+                        <td>
+                            <div class="user-cell">
+                                <div class="avatar-sm">{{ rec.employee.first_name[0] }}{{ rec.employee.last_name[0] }}
+                                </div>
+                                <strong>{{ rec.employee.full_name }}</strong>
+                            </div>
+                        </td>
+                        <td>{{ format_date(rec.date) }}</td>
+                        <td>{{ rec.check_in.strftime('%I:%M %p') if rec.check_in else '-' }}</td>
+                        <td>{{ rec.check_out.strftime('%I:%M %p') if rec.check_out else '-' }}</td>
+                        <td>{{ rec.hours_worked or 0 }}h</td>
+                        <td><span
+                                class="badge badge-{{ 'success' if rec.status == 'present' else ('warning' if rec.status == 'late' else 'danger') }}">{{
+                                rec.status }}</span></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

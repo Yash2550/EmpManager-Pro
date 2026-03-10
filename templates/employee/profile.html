@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% block title %}My Profile — EmpManager Pro{% endblock %}
+{% block page_title %}My Profile{% endblock %}
+
+{% block content %}
+{% if employee %}
+<div class="profile-page">
+    <div class="profile-header-card card">
+        <div class="card-body">
+            <div class="profile-top">
+                <div class="avatar-xl">{{ employee.first_name[0] }}{{ employee.last_name[0] }}</div>
+                <div class="profile-info">
+                    <h2>{{ employee.full_name }}</h2>
+                    <p>{{ employee.designation }} &bull; {{ employee.department.name if employee.department else '' }}
+                    </p>
+                    <div class="profile-badges">
+                        <span class="badge badge-{{ 'success' if employee.status == 'active' else 'danger' }}">{{
+                            employee.status }}</span>
+                        <span class="code-badge">{{ employee.emp_code }}</span>
+                    </div>
+                </div>
+                <div class="profile-actions">
+                    {% if today_att and today_att.check_in %}
+                    <div class="today-status checked-in">
+                        <i class="fas fa-check-circle"></i> Checked in at {{ today_att.check_in.strftime('%I:%M %p') }}
+                        {% if today_att.check_out %}
+                        <br><i class="fas fa-sign-out-alt"></i> Checked out at {{ today_att.check_out.strftime('%I:%M
+                        %p') }}
+                        {% endif %}
+                    </div>
+                    {% else %}
+                    <div class="today-status not-checked">
+                        <i class="fas fa-exclamation-circle"></i> Not checked in today
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="profile-grid">
+        <div class="card">
+            <div class="card-header">
+                <h3><i class="fas fa-id-card"></i> Personal Details</h3>
+            </div>
+            <div class="card-body">
+                <div class="info-grid">
+                    <div class="info-item"><label>Email</label><span>{{ employee.email }}</span></div>
+                    <div class="info-item"><label>Phone</label><span>{{ employee.phone or 'N/A' }}</span></div>
+                    <div class="info-item"><label>Date of Birth</label><span>{{ format_date(employee.date_of_birth) if
+                            employee.date_of_birth else 'N/A' }}</span></div>
+                    <div class="info-item"><label>Gender</label><span>{{ 'Male' if employee.gender == 'M' else ('Female'
+                            if employee.gender == 'F' else 'N/A') }}</span></div>
+                    <div class="info-item"><label>Blood Group</label><span>{{ employee.blood_group or 'N/A' }}</span>
+                    </div>
+                    <div class="info-item"><label>Address</label><span>{{ employee.address or 'N/A' }}</span></div>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <h3><i class="fas fa-briefcase"></i> Employment Details</h3>
+            </div>
+            <div class="card-body">
+                <div class="info-grid">
+                    <div class="info-item"><label>Department</label><span>{{ employee.department.name if
+                            employee.department else 'N/A' }}</span></div>
+                    <div class="info-item"><label>Designation</label><span>{{ employee.designation or 'N/A' }}</span>
+                    </div>
+                    <div class="info-item"><label>Date of Joining</label><span>{{ format_date(employee.date_of_joining)
+                            }}</span></div>
+                    <div class="info-item"><label>Salary</label><span>{{ format_currency(employee.salary) }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="quick-links-grid">
+        <a href="{{ url_for('attendance.my_attendance') }}" class="quick-link-card">
+            <i class="fas fa-fingerprint"></i><span>My Attendance</span>
+        </a>
+        <a href="{{ url_for('employee.leave_request') }}" class="quick-link-card">
+            <i class="fas fa-paper-plane"></i><span>Request Leave</span>
+        </a>
+        <a href="{{ url_for('employee.leaves') }}" class="quick-link-card">
+            <i class="fas fa-calendar-alt"></i><span>Leave History</span>
+        </a>
+        <a href="{{ url_for('employee.payslip') }}" class="quick-link-card">
+            <i class="fas fa-file-invoice-dollar"></i><span>View Payslip</span>
+        </a>
+        <a href="{{ url_for('attendance.qr_code', emp_id=employee.id) }}" class="quick-link-card">
+            <i class="fas fa-qrcode"></i><span>My QR Code</span>
+        </a>
+        <a href="{{ url_for('employee.notifications') }}" class="quick-link-card">
+            <i class="fas fa-bell"></i><span>Notifications{% if unread %} ({{ unread }}){% endif %}</span>
+        </a>
+    </div>
+</div>
+{% else %}
+<div class="card">
+    <div class="card-body text-center" style="padding: 3rem">
+        <i class="fas fa-user-slash" style="font-size: 3rem; color: var(--text-muted); margin-bottom: 1rem;"></i>
+        <h3>No Employee Profile Linked</h3>
+        <p>Your account is not linked to an employee profile. Contact your administrator.</p>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

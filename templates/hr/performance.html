@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block title %}Performance Reviews — EmpManager Pro{% endblock %}
+{% block page_title %}Performance Reviews{% endblock %}
+
+{% block content %}
+<div class="page-actions">
+    <div class="action-left">
+        <form method="GET" class="inline-form">
+            <select name="period" class="form-select" onchange="this.form.submit()">
+                <option value="">All Periods</option>
+                {% for p in periods %}
+                <option value="{{ p }}" {% if period==p %}selected{% endif %}>{{ p }}</option>
+                {% endfor %}
+            </select>
+        </form>
+        <div class="stat-inline">
+            <span>Avg Rating: </span>
+            <span class="rating-stars">
+                {% for i in range(5) %}
+                <i class="fas fa-star {% if avg_rating > i %}star-filled{% else %}star-empty{% endif %}"></i>
+                {% endfor %}
+                <span>({{ avg_rating }})</span>
+            </span>
+        </div>
+    </div>
+    <div class="action-right">
+        <a href="{{ url_for('hr.add_performance') }}" class="btn btn-primary"><i class="fas fa-plus"></i> Add Review</a>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <div class="table-wrapper">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Employee</th>
+                        <th>Period</th>
+                        <th>Rating</th>
+                        <th>Goals</th>
+                        <th>Strengths</th>
+                        <th>Improvements</th>
+                        <th>Review Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for r in reviews %}
+                    <tr>
+                        <td>
+                            <div class="user-cell">
+                                <div class="avatar-sm">{{ r.employee.first_name[0] }}{{ r.employee.last_name[0] }}</div>
+                                <strong>{{ r.employee.full_name }}</strong>
+                            </div>
+                        </td>
+                        <td><span class="code-badge">{{ r.period }}</span></td>
+                        <td>
+                            <div class="rating-display">
+                                <span class="rating-number">{{ r.rating }}</span>
+                                <div class="rating-bar">
+                                    <div class="rating-bar-fill" style="width: {{ r.rating / 5 * 100 }}%"></div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>{{ r.goals_met }}/{{ r.goals_total }}</td>
+                        <td class="truncate-text">{{ r.strengths }}</td>
+                        <td class="truncate-text">{{ r.improvements }}</td>
+                        <td>{{ format_date(r.review_date) }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block title %}My Attendance — EmpManager Pro{% endblock %}
+{% block page_title %}My Attendance{% endblock %}
+
+{% block content %}
+<div class="page-actions">
+    <form method="GET" class="inline-form">
+        <select name="month" class="form-select">
+            {% for m_num, m_name in months %}
+            <option value="{{ m_num }}" {% if m_num==month %}selected{% endif %}>{{ m_name }}</option>
+            {% endfor %}
+        </select>
+        <select name="year" class="form-select">
+            {% for y in range(2024, 2028) %}
+            <option value="{{ y }}" {% if y==year %}selected{% endif %}>{{ y }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-filter"></i> View</button>
+    </form>
+</div>
+
+<div class="stats-grid stats-grid-4">
+    <div class="stat-card stat-mini stat-gradient-3">
+        <div class="stat-info">
+            <h3>{{ present }}</h3>
+            <p>Present</p>
+        </div>
+    </div>
+    <div class="stat-card stat-mini stat-gradient-6">
+        <div class="stat-info">
+            <h3>{{ absent }}</h3>
+            <p>Absent</p>
+        </div>
+    </div>
+    <div class="stat-card stat-mini stat-gradient-5">
+        <div class="stat-info">
+            <h3>{{ late }}</h3>
+            <p>Late</p>
+        </div>
+    </div>
+    <div class="stat-card stat-mini stat-gradient-1">
+        <div class="stat-info">
+            <h3>{{ total_hours }}h</h3>
+            <p>Total Hours</p>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <div class="table-wrapper">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Check In</th>
+                        <th>Check Out</th>
+                        <th>Hours</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for rec in records %}
+                    <tr>
+                        <td>{{ format_date(rec.date) }}</td>
+                        <td>{{ rec.check_in.strftime('%I:%M %p') if rec.check_in else '-' }}</td>
+                        <td>{{ rec.check_out.strftime('%I:%M %p') if rec.check_out else '-' }}</td>
+                        <td>{{ rec.hours_worked or 0 }}h</td>
+                        <td><span
+                                class="badge badge-{{ 'success' if rec.status == 'present' else ('warning' if rec.status == 'late' else 'danger') }}">{{
+                                rec.status }}</span></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

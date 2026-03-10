@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% block title %}Payroll — EmpManager Pro{% endblock %}
+{% block page_title %}Payroll Management{% endblock %}
+
+{% block content %}
+<div class="page-actions">
+    <div class="action-left">
+        <form method="GET" class="inline-form">
+            <select name="month" class="form-select">
+                {% for m_num, m_name in months %}
+                <option value="{{ m_num }}" {% if m_num==month %}selected{% endif %}>{{ m_name }}</option>
+                {% endfor %}
+            </select>
+            <select name="year" class="form-select">
+                {% for y in years %}
+                <option value="{{ y }}" {% if y==year %}selected{% endif %}>{{ y }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-filter"></i> View</button>
+        </form>
+    </div>
+    <div class="action-right">
+        <a href="{{ url_for('hr.export_payroll', month=month, year=year) }}" class="btn btn-outline btn-sm"><i
+                class="fas fa-file-excel"></i> Export</a>
+        <form method="POST" action="{{ url_for('hr.generate_payroll') }}" style="display:inline">
+            <input type="hidden" name="month" value="{{ month }}">
+            <input type="hidden" name="year" value="{{ year }}">
+            <button type="submit" class="btn btn-primary" onclick="return confirm('Generate payroll?')">
+                <i class="fas fa-calculator"></i> Generate Payroll
+            </button>
+        </form>
+    </div>
+</div>
+
+<div class="stats-grid stats-grid-3">
+    <div class="stat-card stat-gradient-2">
+        <div class="stat-icon"><i class="fas fa-money-bill"></i></div>
+        <div class="stat-info">
+            <h3>{{ format_currency(total_gross) }}</h3>
+            <p>Total Gross</p>
+        </div>
+    </div>
+    <div class="stat-card stat-gradient-6">
+        <div class="stat-icon"><i class="fas fa-minus-circle"></i></div>
+        <div class="stat-info">
+            <h3>{{ format_currency(total_deductions) }}</h3>
+            <p>Total Deductions</p>
+        </div>
+    </div>
+    <div class="stat-card stat-gradient-3">
+        <div class="stat-icon"><i class="fas fa-wallet"></i></div>
+        <div class="stat-info">
+            <h3>{{ format_currency(total_net) }}</h3>
+            <p>Total Net Pay</p>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <div class="table-wrapper">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Employee</th>
+                        <th>Basic</th>
+                        <th>HRA</th>
+                        <th>DA</th>
+                        <th>Gross</th>
+                        <th>PF</th>
+                        <th>Tax</th>
+                        <th>Net Salary</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for p in payrolls %}
+                    <tr>
+                        <td>
+                            <div class="user-cell">
+                                <div class="avatar-sm">{{ p.employee.first_name[0] }}{{ p.employee.last_name[0] }}</div>
+                                <div><strong>{{ p.employee.full_name }}</strong><small>{{ p.employee.emp_code }}</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td>{{ format_currency(p.basic_salary) }}</td>
+                        <td>{{ format_currency(p.hra) }}</td>
+                        <td>{{ format_currency(p.da) }}</td>
+                        <td><strong>{{ format_currency(p.gross_salary) }}</strong></td>
+                        <td class="text-danger">-{{ format_currency(p.pf_deduction) }}</td>
+                        <td class="text-danger">-{{ format_currency(p.tax_deduction) }}</td>
+                        <td><strong class="text-success">{{ format_currency(p.net_salary) }}</strong></td>
+                        <td><span class="badge badge-{{ 'success' if p.status == 'paid' else 'warning' }}">{{ p.status
+                                }}</span></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

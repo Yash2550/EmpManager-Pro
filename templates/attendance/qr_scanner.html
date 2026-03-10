@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+{% block title %}QR Scanner — EmpManager Pro{% endblock %}
+{% block page_title %}QR Attendance Scanner{% endblock %}
+
+{% block content %}
+<div class="scanner-page">
+    <div class="scanner-grid">
+        <div class="card scanner-card">
+            <div class="card-header">
+                <h3><i class="fas fa-camera"></i> Scan QR Code</h3>
+                <div class="scanner-mode-toggle">
+                    <button class="btn btn-sm btn-primary active" id="checkinMode" onclick="setMode('checkin')">Check
+                        In</button>
+                    <button class="btn btn-sm btn-outline" id="checkoutMode" onclick="setMode('checkout')">Check
+                        Out</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="qr-reader" class="qr-reader-container"></div>
+                <div class="manual-entry">
+                    <p>Or enter employee code manually:</p>
+                    <div class="inline-form">
+                        <input type="text" id="manualCode" placeholder="e.g. EMP-0001" class="form-input">
+                        <button class="btn btn-primary" onclick="manualCheckin()"><i class="fas fa-check"></i>
+                            Submit</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card result-card">
+            <div class="card-header">
+                <h3><i class="fas fa-history"></i> Scan Results</h3>
+            </div>
+            <div class="card-body">
+                <div id="scanResults" class="scan-results">
+                    <div class="empty-state">
+                        <i class="fas fa-qrcode"></i>
+                        <p>Scan a QR code to see results here</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+<script>
+    let currentMode = 'checkin';
+    let html5QrCode;
+
+    function setMode(mode) {
+        currentMode = mode;
+        document.getElementById('checkinMode').className = mode === 'checkin' ? 'btn btn-sm btn-primary active' : 'btn btn-sm btn-outline';
+        document.getElementById('checkoutMode').className = mode === 'checkout' ? 'btn btn-sm btn-primary active' : 'btn btn-sm btn-outline';
+    }
+
+    function addResult(msg, success) {
+        const container = document.getElementById('scanResults');
+        const empty = container.querySelector('.empty-state');
+        if (empty) empty.remove();
+
+        const div = document.createElement('div');
+        div.className = `scan-result ${success ? 'result-success' : 'result-error'}`;
+        div.innerHTML = `
+        <i class="fas ${success ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
+        <div>
+            <p>${msg}</p>
+            <small>${new Date().toLocaleTimeString()}</small>
+        </div>
+    `;
+        container.prepend(div);
+    }
+
+    async function processQRData(data) {
+        const url = currentMode === 'checkin' ? '/attendance/checkin' : '/attendance/checkout';
+        try {
+            const resp = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ qr_data: data })
+            });
+            const result = await resp.json();
+            addResult(result.message, result.success);
+        } catch (e) {
+            addResult('Error processing request: ' + e.message, false);
+        }
+    }
+
+    function manualCheckin() {
+        const code = document.getElementById('manualCode').value.trim();
+        if (!code) return;
+        // Build full QR data format
+        const qrData = `EMPMGMT|${code}|0|Manual`;
+        processQRData(qrData);
+        document.getElementById('manualCode').value = '';
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        try {
+            html5QrCode = new Html5Qrcode("qr-reader");
+            html5QrCode.start(
+                { facingMode: "environment" },
+                { fps: 10, qrbox: { width: 250, height: 250 } },
+                (decodedText) => {
+                    processQRData(decodedText);
+                    // Pause briefly to avoid duplicate scans
+                    html5QrCode.pause();
+                    setTimeout(() => html5QrCode.resume(), 3000);
+                },
+                (errorMessage) => { }
+            ).catch(err => {
+                document.getElementById('qr-reader').innerHTML =
+                    '<div class="scanner-fallback"><i class="fas fa-camera-slash"></i><p>Camera not available. Use manual entry below.</p></div>';
+            });
+        } catch (e) {
+            document.getElementById('qr-reader').innerHTML =
+                '<div class="scanner-fallback"><i class="fas fa-camera-slash"></i><p>Camera not available. Use manual entry below.</p></div>';
+        }
+    });
+</script>
+{% endblock %}

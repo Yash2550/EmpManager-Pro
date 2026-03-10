@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}QR Code — {{ employee.full_name }} — EmpManager Pro{% endblock %}
+{% block page_title %}Employee QR Code{% endblock %}
+
+{% block content %}
+<div class="qr-display-page">
+    <div class="card qr-display-card">
+        <div class="card-body text-center">
+            <div class="qr-employee-info">
+                <div class="avatar-lg">{{ employee.first_name[0] }}{{ employee.last_name[0] }}</div>
+                <h2>{{ employee.full_name }}</h2>
+                <p>{{ employee.emp_code }} &bull; {{ employee.designation }}</p>
+                <p>{{ employee.department.name if employee.department else '' }}</p>
+            </div>
+            <div class="qr-image-container">
+                <img src="data:image/png;base64,{{ qr_base64 }}" alt="QR Code for {{ employee.full_name }}"
+                    class="qr-image">
+            </div>
+            <p class="qr-instruction">Scan this QR code at the attendance scanner for check-in / check-out</p>
+            <div class="qr-actions">
+                <button class="btn btn-primary" onclick="window.print()"><i class="fas fa-print"></i> Print QR</button>
+                <a href="{{ url_for('admin.employee_detail', id=employee.id) }}" class="btn btn-outline"><i
+                        class="fas fa-arrow-left"></i> Back</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

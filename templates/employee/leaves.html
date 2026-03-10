@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}My Leaves — EmpManager Pro{% endblock %}
+{% block page_title %}My Leaves{% endblock %}
+
+{% block content %}
+<div class="page-actions">
+    <div class="action-right">
+        <a href="{{ url_for('employee.leave_request') }}" class="btn btn-primary"><i class="fas fa-plus"></i> Request
+            Leave</a>
+    </div>
+</div>
+
+<!-- Leave Balances -->
+<div class="leave-balance-grid" style="margin-bottom: 1.5rem;">
+    {% for lb in balances %}
+    <div class="leave-balance-card">
+        <h4>{{ lb.leave_type|title }}</h4>
+        <div class="leave-bar">
+            <div class="leave-bar-fill" style="width: {{ (lb.used / lb.total * 100) if lb.total > 0 else 0 }}%"></div>
+        </div>
+        <div class="leave-nums">
+            <span>{{ lb.remaining }} remaining</span>
+            <span>{{ lb.used }}/{{ lb.total }}</span>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h3><i class="fas fa-history"></i> Leave History</h3>
+    </div>
+    <div class="card-body">
+        <div class="table-wrapper">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Type</th>
+                        <th>From</th>
+                        <th>To</th>
+                        <th>Days</th>
+                        <th>Reason</th>
+                        <th>Status</th>
+                        <th>Applied</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for lr in leave_requests %}
+                    <tr>
+                        <td><span class="type-badge type-{{ lr.leave_type }}">{{ lr.leave_type|title }}</span></td>
+                        <td>{{ format_date(lr.start_date) }}</td>
+                        <td>{{ format_date(lr.end_date) }}</td>
+                        <td>{{ lr.days }}</td>
+                        <td class="truncate-text">{{ lr.reason }}</td>
+                        <td><span
+                                class="badge badge-{{ 'warning' if lr.status == 'pending' else ('success' if lr.status == 'approved' else 'danger') }}">{{
+                                lr.status }}</span></td>
+                        <td>{{ time_since(lr.created_at) }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

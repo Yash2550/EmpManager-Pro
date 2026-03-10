@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+{% block title %}{{ employee.full_name }} — EmpManager Pro{% endblock %}
+{% block page_title %}Employee Detail{% endblock %}
+
+{% block content %}
+<div class="employee-detail-header">
+    <div class="detail-avatar">
+        <div class="avatar-lg">{{ employee.first_name[0] }}{{ employee.last_name[0] }}</div>
+    </div>
+    <div class="detail-info">
+        <h2>{{ employee.full_name }}</h2>
+        <p class="detail-subtitle">{{ employee.designation }} &bull; {{ employee.department.name if employee.department
+            else 'N/A' }}</p>
+        <div class="detail-meta">
+            <span class="badge badge-{{ 'success' if employee.status == 'active' else 'danger' }}">{{ employee.status
+                }}</span>
+            <span><i class="fas fa-id-badge"></i> {{ employee.emp_code }}</span>
+            <span><i class="fas fa-envelope"></i> {{ employee.email }}</span>
+            <span><i class="fas fa-phone"></i> {{ employee.phone or 'N/A' }}</span>
+        </div>
+    </div>
+    <div class="detail-actions">
+        <a href="{{ url_for('admin.edit_employee', id=employee.id) }}" class="btn btn-primary"><i
+                class="fas fa-edit"></i> Edit</a>
+        <a href="{{ url_for('attendance.qr_code', emp_id=employee.id) }}" class="btn btn-outline"><i
+                class="fas fa-qrcode"></i> QR Code</a>
+    </div>
+</div>
+
+<!-- Info Cards -->
+<div class="detail-cards-grid">
+    <div class="card">
+        <div class="card-header">
+            <h3><i class="fas fa-user"></i> Personal Info</h3>
+        </div>
+        <div class="card-body">
+            <div class="info-grid">
+                <div class="info-item"><label>Date of Birth</label><span>{{ format_date(employee.date_of_birth) if
+                        employee.date_of_birth else 'N/A' }}</span></div>
+                <div class="info-item"><label>Gender</label><span>{{ 'Male' if employee.gender == 'M' else ('Female' if
+                        employee.gender == 'F' else employee.gender or 'N/A') }}</span></div>
+                <div class="info-item"><label>Blood Group</label><span>{{ employee.blood_group or 'N/A' }}</span></div>
+                <div class="info-item"><label>Address</label><span>{{ employee.address or 'N/A' }}</span></div>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header">
+            <h3><i class="fas fa-briefcase"></i> Employment Info</h3>
+        </div>
+        <div class="card-body">
+            <div class="info-grid">
+                <div class="info-item"><label>Joining Date</label><span>{{ format_date(employee.date_of_joining)
+                        }}</span></div>
+                <div class="info-item"><label>Salary</label><span>{{ format_currency(employee.salary) }}</span></div>
+                <div class="info-item"><label>Department</label><span>{{ employee.department.name if employee.department
+                        else 'N/A' }}</span></div>
+                <div class="info-item"><label>Designation</label><span>{{ employee.designation or 'N/A' }}</span></div>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header">
+            <h3><i class="fas fa-ambulance"></i> Emergency Contact</h3>
+        </div>
+        <div class="card-body">
+            <div class="info-grid">
+                <div class="info-item"><label>Contact Name</label><span>{{ employee.emergency_contact or 'N/A' }}</span>
+                </div>
+                <div class="info-item"><label>Contact Phone</label><span>{{ employee.emergency_phone or 'N/A' }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Leave Balances -->
+<div class="card">
+    <div class="card-header">
+        <h3><i class="fas fa-calendar-alt"></i> Leave Balances (2026)</h3>
+    </div>
+    <div class="card-body">
+        <div class="leave-balance-grid">
+            {% for lb in leave_balances %}
+            <div class="leave-balance-card">
+                <h4>{{ lb.leave_type|title }}</h4>
+                <div class="leave-bar">
+                    <div class="leave-bar-fill" style="width: {{ (lb.used / lb.total * 100) if lb.total > 0 else 0 }}%">
+                    </div>
+                </div>
+                <div class="leave-nums">
+                    <span>Used: {{ lb.used }}</span>
+                    <span>Remaining: {{ lb.remaining }}</span>
+                    <span>Total: {{ lb.total }}</span>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- Recent Attendance -->
+<div class="card">
+    <div class="card-header">
+        <h3><i class="fas fa-clock"></i> Recent Attendance</h3>
+    </div>
+    <div class="card-body">
+        <div class="table-wrapper">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Check In</th>
+                        <th>Check Out</th>
+                        <th>Hours</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for att in recent_attendance %}
+                    <tr>
+                        <td>{{ format_date(att.date) }}</td>
+                        <td>{{ att.check_in.strftime('%I:%M %p') if att.check_in else '-' }}</td>
+                        <td>{{ att.check_out.strftime('%I:%M %p') if att.check_out else '-' }}</td>
+                        <td>{{ att.hours_worked }}h</td>
+                        <td><span
+                                class="badge badge-{{ 'success' if att.status == 'present' else ('warning' if att.status == 'late' else 'danger') }}">{{
+                                att.status }}</span></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
