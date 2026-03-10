@@ -8,5 +8,4 @@ services:
       - key: PYTHON_VERSION
         value: 3.11.0
       - key: SECRET_KEY
-        value: generateMe
         generateValue: true
