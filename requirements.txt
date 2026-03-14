@@ -1,5 +1,7 @@
-Flask
-gunicorn
-flask-login
+flask
 flask-sqlalchemy
-mysql-connector-python
+flask-login
+werkzeug
+qrcode[pil]
+Pillow
+openpyxl
