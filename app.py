@@ -1,4 +1,8 @@
 import os
+import sys
+print(f"DEBUG: Current Directory: {os.getcwd()}")
+print(f"DEBUG: Directory Contents: {os.listdir(os.getcwd())}")
+
 from flask import Flask, app, redirect, url_for, render_template, render_template_string
 from flask_login import LoginManager
 from flask_migrate import Migrate

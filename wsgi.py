@@ -1,7 +1,9 @@
-"""
-WSGI entry point for production deployment.
-Creates the Flask app via the factory function in app.py.
-"""
+import os
+import sys
+
+# Force the current directory into the python path for Docker/HuggingFace
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
 from app import create_app
 
 app = create_app()
