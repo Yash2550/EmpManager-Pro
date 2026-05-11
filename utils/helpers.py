@@ -15,7 +15,7 @@ def format_datetime(dt, fmt='%d %b %Y, %I:%M %p'):
     """Format a datetime object."""
     if dt is None:
         return 'N/A'
-    return dt.strftime(fmt)
+    return dt.strftime(fmt) 
 
 
 def format_currency(amount):

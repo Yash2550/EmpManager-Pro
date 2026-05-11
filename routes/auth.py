@@ -8,7 +8,12 @@ auth_bp = Blueprint('auth', __name__)
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
-        return redirect(url_for('admin.dashboard'))
+        if current_user.role == 'admin':
+            return redirect(url_for('admin.dashboard'))
+        elif current_user.role == 'hr':
+            return redirect(url_for('hr.leave_management'))
+        else:
+            return redirect(url_for('employee.profile'))
     
     if request.method == 'POST':
         username = request.form.get('username', '').strip()
@@ -44,7 +49,12 @@ def login():
 @auth_bp.route('/register', methods=['GET', 'POST'])
 def register():
     if current_user.is_authenticated:
-        return redirect(url_for('admin.dashboard'))
+        if current_user.role == 'admin':
+            return redirect(url_for('admin.dashboard'))
+        elif current_user.role == 'hr':
+            return redirect(url_for('hr.leave_management'))
+        else:
+            return redirect(url_for('employee.profile'))
     
     if request.method == 'POST':
         username = request.form.get('username', '').strip()

@@ -6,9 +6,8 @@ import os, sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from app import create_app
-from models import db, User, Department, Employee, Attendance, LeaveRequest, LeaveBalance, Payroll, Performance, Notification
+from models import db, User, Department, Employee, LeaveRequest, LeaveBalance, Payroll, Performance, Notification, ChatMessage, Attendance
 from datetime import datetime, date, timedelta
-from utils.qr_generator import generate_qr_code
 import random
 
 app = create_app()
@@ -58,9 +57,6 @@ def seed_data():
             ('Swati', 'Mishra', 'swati.mishra@company.com', '9876543229', 2, 'Recruiter', 52000, 'F', 'B+'),
         ]
 
-        qr_dir = os.path.join(os.path.dirname(__file__), 'static', 'qrcodes')
-        os.makedirs(qr_dir, exist_ok=True)
-
         employees = []
         for i, (fn, ln, email, phone, dept_id, desig, salary, gender, bg) in enumerate(emp_data, 1):
             doj = date(2024, 1, 1) + timedelta(days=random.randint(0, 500))
@@ -80,18 +76,7 @@ def seed_data():
         
         db.session.add_all(employees)
         db.session.flush()
-
-        # Generate QR codes
-        for emp in employees:
-            qr_data = f"EMPMGMT|{emp.emp_code}|{emp.id}|{emp.full_name}"
-            qr_filename = f"qr_{emp.emp_code}.png"
-            try:
-                generate_qr_code(qr_data, qr_filename, qr_dir)
-                emp.qr_code = qr_filename
-            except Exception:
-                emp.qr_code = None
-
-        print(f"[OK] {len(employees)} employees created with QR codes.")
+        print(f"[OK] {len(employees)} employees created.")
 
         # ── Users (Admin, HR, Employee accounts) ─────
         admin_user = User(username='admin', email='admin@company.com', role='admin')
@@ -111,34 +96,25 @@ def seed_data():
         db.session.flush()
         print(f"[OK] {len(users)} user accounts created.")
 
-        # ── Attendance (last 30 days) ────────────────
-        att_count = 0
         today = date.today()
+
+        # ── Attendance ───────────────────────────────
+        att_count = 0
         for emp in employees:
-            for d in range(30):
-                att_date = today - timedelta(days=d)
-                if att_date.weekday() >= 5:  # skip weekends
+            for day_offset in range(30):
+                d = today - timedelta(days=day_offset)
+                if d.weekday() >= 5:  # Skip weekends
                     continue
-                is_present = random.random() > 0.1  # 90% attendance rate
-                if is_present:
-                    hour_in = random.randint(8, 10)
-                    min_in = random.randint(0, 59)
-                    check_in = datetime(att_date.year, att_date.month, att_date.day, hour_in, min_in)
-                    hour_out = random.randint(17, 19)
-                    min_out = random.randint(0, 59)
-                    check_out = datetime(att_date.year, att_date.month, att_date.day, hour_out, min_out)
-                    hours = (check_out - check_in).total_seconds() / 3600
-                    status = 'late' if hour_in >= 10 else 'present'
-                else:
-                    check_in = None
-                    check_out = None
-                    hours = 0
-                    status = 'absent'
+                
+                check_in_time = datetime.strptime(f"{random.randint(8, 10)}:{random.randint(0, 59)}", "%H:%M").time()
+                check_out_time = datetime.strptime(f"{random.randint(17, 19)}:{random.randint(0, 59)}", "%H:%M").time()
                 
                 att = Attendance(
-                    employee_id=emp.id, date=att_date,
-                    check_in=check_in, check_out=check_out,
-                    hours_worked=round(hours, 1), status=status
+                    employee_id=emp.id,
+                    date=d,
+                    check_in=check_in_time,
+                    check_out=check_out_time,
+                    status='present' if random.random() > 0.05 else 'absent'
                 )
                 db.session.add(att)
                 att_count += 1
@@ -165,7 +141,7 @@ def seed_data():
                 lb_count += 1
         print(f"[OK] {lb_count} leave balances created.")
 
-        # ── Leave Requests (some sample) ─────────────
+        # ── Leave Requests ───────────────────────────
         statuses = ['pending', 'approved', 'rejected']
         lr_count = 0
         for emp in employees[:10]:
@@ -247,13 +223,12 @@ def seed_data():
                 db.session.add(n)
 
         db.session.commit()
-        print("\nDatabase seeded successfully!")
+        print("\n[OK] Database seeded successfully!")
         print("=" * 50)
         print("  Admin Login: admin / admin123")
         print("  HR Login:    hrmanager / hr123")
         print("  Employee:    aarav.sharma / pass123")
         print("=" * 50)
-
-
+        
 if __name__ == '__main__':
     seed_data()

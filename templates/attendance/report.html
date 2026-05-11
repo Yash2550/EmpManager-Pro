@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="content-header">
+    <div class="header-title">
+        <h1>Daily Attendance Report</h1>
+        <p>Overview of all employee attendance</p>
+    </div>
+    
+    <div class="header-actions">
+        <a href="{{ url_for('attendance.export_report') }}" class="btn btn-secondary"><i class="fas fa-file-export"></i> Export CSV</a>
+    </div>
+</div>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <form action="{{ url_for('attendance.report') }}" method="GET" class="filter-form">
+            <input type="date" name="date" class="form-control" value="{{ date.strftime('%Y-%m-%d') }}" onchange="this.form.submit()">
+        </form>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Employee</th>
+                    <th>Check In</th>
+                    <th>Check Out</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for record in records %}
+                <tr>
+                    <td>
+                        <div class="d-flex align-items-center">
+                            <img src="{{ url_for('static', filename='img/avatars/' + record.employee_rel.avatar) }}" class="avatar-sm" alt="avatar">
+                            <div>
+                                <strong>{{ record.employee_rel.full_name }}</strong>
+                                <div class="text-muted small">{{ record.employee_rel.emp_code }}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>{{ record.check_in.strftime('%I:%M %p') if record.check_in else '-' }}</td>
+                    <td>{{ record.check_out.strftime('%I:%M %p') if record.check_out else '-' }}</td>
+                    <td>
+                        {% if record.status == 'present' %}
+                        <span class="badge badge-success">Present</span>
+                        {% elif record.status == 'absent' %}
+                        <span class="badge badge-danger">Absent</span>
+                        {% else %}
+                        <span class="badge badge-info">{{ record.status|title }}</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="4" class="text-center">No attendance records found for this date.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

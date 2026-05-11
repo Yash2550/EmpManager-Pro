@@ -1,8 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify, send_file
 from flask_login import login_required, current_user
-from models import db, Employee, Department, User, Attendance, LeaveRequest, Payroll
+from models import db, Employee, Department, User, LeaveRequest, Payroll
 from utils.decorators import admin_required
-from utils.qr_generator import generate_qr_code
 from utils.export import export_employees_excel
 from datetime import datetime, date, timedelta
 import os
@@ -18,10 +17,6 @@ def dashboard():
     total_departments = Department.query.count()
     
     today = date.today()
-    present_today = Attendance.query.filter_by(date=today, status='present').count()
-    late_today = Attendance.query.filter_by(date=today, status='late').count()
-    absent_today = total_employees - present_today - late_today
-    
     pending_leaves = LeaveRequest.query.filter_by(status='pending').count()
     
     recent_employees = Employee.query.order_by(Employee.created_at.desc()).limit(5).all()
@@ -32,37 +27,40 @@ def dashboard():
     dept_names = [d.name for d in departments]
     dept_counts = [d.employees.filter_by(status='active').count() for d in departments]
     
-    # Attendance trend (last 7 days)
-    att_dates = []
-    att_present = []
-    att_absent = []
-    for i in range(6, -1, -1):
-        d = today - timedelta(days=i)
-        if d.weekday() < 5:
-            att_dates.append(d.strftime('%d %b'))
-            p = Attendance.query.filter_by(date=d).filter(Attendance.status.in_(['present', 'late'])).count()
-            att_present.append(p)
-            att_absent.append(total_employees - p)
-    
     # Monthly payroll total
     current_month_payroll = db.session.query(
         db.func.sum(Payroll.net_salary)
     ).filter_by(month=today.month, year=today.year).scalar() or 0
     
+    # Attendance Trend (Last 7 Days)
+    from models import Attendance
+    att_dates = []
+    att_present = []
+    att_absent = []
+    
+    for i in range(6, -1, -1):
+        d = today - timedelta(days=i)
+        att_dates.append(d.strftime('%b %d'))
+        p_count = Attendance.query.filter_by(date=d, status='present').count()
+        a_count = Attendance.query.filter_by(date=d, status='absent').count()
+        att_present.append(p_count)
+        att_absent.append(a_count)
+        
+    present_today = att_present[-1] if att_present else 0
+    
     return render_template('admin/dashboard.html',
         total_employees=total_employees,
         total_departments=total_departments,
-        present_today=present_today + late_today,
-        absent_today=absent_today,
         pending_leaves=pending_leaves,
         recent_employees=recent_employees,
         recent_leaves=recent_leaves,
         dept_names=dept_names,
         dept_counts=dept_counts,
+        current_month_payroll=current_month_payroll,
+        present_today=present_today,
         att_dates=att_dates,
         att_present=att_present,
-        att_absent=att_absent,
-        current_month_payroll=current_month_payroll
+        att_absent=att_absent
     )
 
 
@@ -129,18 +127,6 @@ def add_employee():
         db.session.add(emp)
         db.session.flush()
         
-        # Generate QR code
-        qr_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'static', 'qrcodes')
-        if not os.path.exists(qr_dir):
-            qr_dir = os.path.join(os.path.abspath(os.path.dirname(os.path.dirname(__file__))), 'static', 'qrcodes')
-        from flask import current_app
-        qr_dir = os.path.join(current_app.root_path, 'static', 'qrcodes')
-        os.makedirs(qr_dir, exist_ok=True)
-        qr_data = f"EMPMGMT|{emp.emp_code}|{emp.id}|{emp.full_name}"
-        qr_filename = f"qr_{emp.emp_code}.png"
-        generate_qr_code(qr_data, qr_filename, qr_dir)
-        emp.qr_code = qr_filename
-        
         # Create user account
         username = f"{emp.first_name.lower()}.{emp.last_name.lower()}"
         user = User(username=username, email=emp.email, role='employee', employee_id=emp.id)
@@ -203,13 +189,12 @@ def edit_employee(id):
 @admin_required
 def employee_detail(id):
     emp = Employee.query.get_or_404(id)
-    recent_attendance = Attendance.query.filter_by(employee_id=id).order_by(Attendance.date.desc()).limit(10).all()
     recent_leaves = LeaveRequest.query.filter_by(employee_id=id).order_by(LeaveRequest.created_at.desc()).limit(5).all()
     latest_payroll = Payroll.query.filter_by(employee_id=id).order_by(Payroll.year.desc(), Payroll.month.desc()).first()
     from models import LeaveBalance
     leave_balances = LeaveBalance.query.filter_by(employee_id=id, year=2026).all()
     return render_template('admin/employee_detail.html',
-        employee=emp, recent_attendance=recent_attendance,
+        employee=emp,
         recent_leaves=recent_leaves, latest_payroll=latest_payroll,
         leave_balances=leave_balances
     )
@@ -279,13 +264,13 @@ def export_employees():
 @login_required
 @admin_required
 def api_stats():
-    today = date.today()
     departments = Department.query.all()
     
     return jsonify({
         'dept_names': [d.name for d in departments],
         'dept_counts': [d.employees.filter_by(status='active').count() for d in departments],
         'total_employees': Employee.query.filter_by(status='active').count(),
-        'present_today': Attendance.query.filter_by(date=today).filter(
-            Attendance.status.in_(['present', 'late'])).count(),
     })
+
+
+

@@ -11,7 +11,7 @@ def role_required(*roles):
             if not current_user.is_authenticated:
                 flash('Please log in to access this page.', 'warning')
                 return redirect(url_for('auth.login'))
-            if current_user.role not in roles:
+            if current_user.role not in roles:   
                 abort(403)
             return f(*args, **kwargs)
         return decorated_function
@@ -42,3 +42,4 @@ def hr_required(f):
             abort(403)
         return f(*args, **kwargs)
     return decorated_function
+    

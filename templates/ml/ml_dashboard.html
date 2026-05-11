@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+{% block title %}ML Predictions — EmpManager Pro{% endblock %}
+{% block page_title %}ML Predictions{% endblock %}
+{% block content %}
+<!-- Summary Cards -->
+<div class="stats-grid">
+  <div class="stat-card stat-gradient-1">
+    <div class="stat-icon"><i class="fas fa-users"></i></div>
+    <div class="stat-info"><h3>{{ total }}</h3><p>Total Employees</p></div>
+    <div class="stat-wave"></div>
+  </div>
+  <div class="stat-card" style="background:linear-gradient(135deg,#ef4444,#dc2626);">
+    <div class="stat-icon"><i class="fas fa-exclamation-triangle"></i></div>
+    <div class="stat-info"><h3>{{ high_risk|length }}</h3><p>High Risk</p></div>
+    <div class="stat-wave"></div>
+  </div>
+  <div class="stat-card" style="background:linear-gradient(135deg,#f59e0b,#d97706);">
+    <div class="stat-icon"><i class="fas fa-minus-circle"></i></div>
+    <div class="stat-info"><h3>{{ medium_risk|length }}</h3><p>Medium Risk</p></div>
+    <div class="stat-wave"></div>
+  </div>
+  <div class="stat-card" style="background:linear-gradient(135deg,#10b981,#059669);">
+    <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+    <div class="stat-info"><h3>{{ low_risk|length }}</h3><p>Low Risk</p></div>
+    <div class="stat-wave"></div>
+  </div>
+</div>
+
+<!-- My Predictions -->
+{% if current_user.employee_id %}
+<div class="card" style="margin-top:1.5rem;">
+  <div class="card-header">
+    <h3><i class="fas fa-user-chart"></i> My Personal Predictions</h3>
+    <button onclick="loadMyPredictions()" class="btn btn-sm btn-outline"><i class="fas fa-sync"></i> Refresh</button>
+  </div>
+  <div class="card-body" id="myPredictionsBox">
+    <p style="color:var(--text-muted);">Click Refresh to load your personal AI predictions.</p>
+  </div>
+</div>
+{% endif %}
+
+<!-- Department Risk -->
+<div class="card" style="margin-top:1.5rem;">
+  <div class="card-header"><h3><i class="fas fa-building"></i> Department Risk Summary</h3></div>
+  <div class="card-body">
+    <div class="table-wrapper">
+      <table class="data-table">
+        <thead><tr><th>Department</th><th>Avg Risk</th><th>High Risk Count</th><th>Total</th></tr></thead>
+        <tbody>
+          {% for d in dept_summary %}
+          <tr>
+            <td>{{ d.department }}</td>
+            <td>
+              <span class="badge badge-{% if d.avg_risk >= 60 %}danger{% elif d.avg_risk >= 35 %}warning{% else %}success{% endif %}">
+                {{ d.avg_risk }}%
+              </span>
+            </td>
+            <td>{{ d.high_risk_count }}</td>
+            <td>{{ d.total }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- All Employee Predictions -->
+<div class="card" style="margin-top:1.5rem;">
+  <div class="card-header"><h3><i class="fas fa-table"></i> Attrition Risk — All Employees</h3></div>
+  <div class="card-body">
+    <div class="table-wrapper">
+      <table class="data-table">
+        <thead><tr><th>Employee</th><th>Department</th><th>Risk Score</th><th>Risk Level</th><th>Factors</th></tr></thead>
+        <tbody>
+          {% for p in predictions %}
+          <tr>
+            <td>{{ p.name }}</td>
+            <td>{{ p.department }}</td>
+            <td>
+              <div style="display:flex;align-items:center;gap:0.5rem;">
+                <div style="flex:1;height:6px;background:var(--border);border-radius:3px;">
+                  <div style="width:{{ p.risk_score }}%;height:6px;border-radius:3px;background:{% if p.risk_score >= 60 %}#ef4444{% elif p.risk_score >= 35 %}#f59e0b{% else %}#10b981{% endif %};"></div>
+                </div>
+                <span style="font-size:0.8rem;font-weight:600;">{{ p.risk_score }}%</span>
+              </div>
+            </td>
+            <td>
+              <span class="badge badge-{% if p.risk_level == 'High' %}danger{% elif p.risk_level == 'Medium' %}warning{% else %}success{% endif %}">
+                {{ p.risk_level }}
+              </span>
+            </td>
+            <td style="font-size:0.8rem;color:var(--text-muted);">
+              {{ p.risk_factors|join(', ') if p.risk_factors else 'None identified' }}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function loadMyPredictions() {
+  const box = document.getElementById('myPredictionsBox');
+  box.innerHTML = '<p><i class="fas fa-spinner fa-spin"></i> Loading...</p>';
+  fetch('/ml/my-predictions')
+    .then(r => r.json())
+    .then(data => {
+      const a = data.attrition || {}, s = data.salary || {}, p = data.performance || {};
+      box.innerHTML = `
+        <div class="stats-grid" style="margin:0;">
+          <div class="stat-card stat-gradient-2" style="padding:1rem;">
+            <div class="stat-icon" style="font-size:1.5rem;"><i class="fas fa-heartbeat"></i></div>
+            <div class="stat-info">
+              <h3>${a.risk_score ?? 'N/A'}%</h3>
+              <p>Attrition Risk — <span class="badge badge-${a.risk_level === 'High' ? 'danger' : a.risk_level === 'Medium' ? 'warning' : 'success'}">${a.risk_level ?? 'N/A'}</span></p>
+            </div>
+          </div>
+          <div class="stat-card stat-gradient-3" style="padding:1rem;">
+            <div class="stat-icon" style="font-size:1.5rem;"><i class="fas fa-rupee-sign"></i></div>
+            <div class="stat-info">
+              <h3>₹${Number(s.predicted_next_year ?? 0).toLocaleString('en-IN')}</h3>
+              <p>Predicted Salary (Next Year)</p>
+            </div>
+          </div>
+          <div class="stat-card stat-gradient-4" style="padding:1rem;">
+            <div class="stat-icon" style="font-size:1.5rem;"><i class="fas fa-star"></i></div>
+            <div class="stat-info">
+              <h3>${p.predicted_rating ?? 'N/A'}/5</h3>
+              <p>Predicted Rating — <em>${p.trend ?? 'stable'}</em></p>
+            </div>
+          </div>
+        </div>`;
+    })
+    .catch(() => { box.innerHTML = '<p style="color:var(--danger);">Failed to load predictions.</p>'; });
+}
+</script>
+{% endblock %}

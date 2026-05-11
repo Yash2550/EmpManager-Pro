@@ -14,7 +14,7 @@ class User(UserMixin, db.Model):
     password_hash = db.Column(db.String(256), nullable=False)
     role = db.Column(db.String(20), default='employee')  # admin, hr, employee
     employee_id = db.Column(db.Integer, db.ForeignKey('employees.id'), nullable=True)
-    is_active = db.Column(db.Boolean, default=True)
+    is_active = db.Column(db.Boolean, default=True) # type: ignore
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
     employee = db.relationship('Employee', backref='user_account', uselist=False, foreign_keys=[employee_id])
@@ -53,18 +53,17 @@ class Employee(db.Model):
     date_of_joining = db.Column(db.Date, nullable=False)
     date_of_birth = db.Column(db.Date)
     gender = db.Column(db.String(10))
-    address = db.Column(db.Text)
+    address = db.Column(db.Text)    
     salary = db.Column(db.Float, default=0.0)
     status = db.Column(db.String(20), default='active')  # active, inactive, terminated
     avatar = db.Column(db.String(256), default='default.png')
-    qr_code = db.Column(db.String(256))
     emergency_contact = db.Column(db.String(100))
     emergency_phone = db.Column(db.String(20))
     blood_group = db.Column(db.String(5))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     
-    attendances = db.relationship('Attendance', backref='employee', lazy='dynamic')
+
     leave_requests = db.relationship('LeaveRequest', backref='employee', lazy='dynamic')
     leave_balances = db.relationship('LeaveBalance', backref='employee', lazy='dynamic')
     payrolls = db.relationship('Payroll', backref='employee', lazy='dynamic')
@@ -75,18 +74,19 @@ class Employee(db.Model):
     def full_name(self):
         return f"{self.first_name} {self.last_name}"
 
-# ─── Attendance Model ─────────────────────────────────────────
+# ─── Attendance Model ───────────────────────────────────────────
 class Attendance(db.Model):
-    __tablename__ = 'attendances'
+    __tablename__ = 'attendance'
     id = db.Column(db.Integer, primary_key=True)
     employee_id = db.Column(db.Integer, db.ForeignKey('employees.id'), nullable=False)
-    date = db.Column(db.Date, default=date.today, nullable=False)
-    check_in = db.Column(db.DateTime)
-    check_out = db.Column(db.DateTime)
-    status = db.Column(db.String(20), default='present')  # present, absent, late, half-day, on-leave
-    hours_worked = db.Column(db.Float, default=0.0)
+    date = db.Column(db.Date, nullable=False, default=date.today)
+    check_in = db.Column(db.Time, nullable=True)
+    check_out = db.Column(db.Time, nullable=True)
+    status = db.Column(db.String(20), default='present')  # present, absent, half-day, leave
     notes = db.Column(db.Text)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    employee_rel = db.relationship('Employee', backref=db.backref('attendances', lazy='dynamic'))
     
     __table_args__ = (
         db.UniqueConstraint('employee_id', 'date', name='unique_attendance_per_day'),
@@ -174,4 +174,13 @@ class Notification(db.Model):
     type = db.Column(db.String(20), default='info')  # info, success, warning, error
     is_read = db.Column(db.Boolean, default=False)
     link = db.Column(db.String(256))
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+# ─── Chat Message Model (AI Chatbot) ──────────────────────────
+class ChatMessage(db.Model):
+    __tablename__ = 'chat_messages'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    role = db.Column(db.String(20), nullable=False)  # user, assistant
+    content = db.Column(db.Text, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)

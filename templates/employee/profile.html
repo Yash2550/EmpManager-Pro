@@ -19,21 +19,7 @@
                         <span class="code-badge">{{ employee.emp_code }}</span>
                     </div>
                 </div>
-                <div class="profile-actions">
-                    {% if today_att and today_att.check_in %}
-                    <div class="today-status checked-in">
-                        <i class="fas fa-check-circle"></i> Checked in at {{ today_att.check_in.strftime('%I:%M %p') }}
-                        {% if today_att.check_out %}
-                        <br><i class="fas fa-sign-out-alt"></i> Checked out at {{ today_att.check_out.strftime('%I:%M
-                        %p') }}
-                        {% endif %}
-                    </div>
-                    {% else %}
-                    <div class="today-status not-checked">
-                        <i class="fas fa-exclamation-circle"></i> Not checked in today
-                    </div>
-                    {% endif %}
-                </div>
+
             </div>
         </div>
     </div>
@@ -77,9 +63,7 @@
     </div>
 
     <div class="quick-links-grid">
-        <a href="{{ url_for('attendance.my_attendance') }}" class="quick-link-card">
-            <i class="fas fa-fingerprint"></i><span>My Attendance</span>
-        </a>
+
         <a href="{{ url_for('employee.leave_request') }}" class="quick-link-card">
             <i class="fas fa-paper-plane"></i><span>Request Leave</span>
         </a>
@@ -89,8 +73,14 @@
         <a href="{{ url_for('employee.payslip') }}" class="quick-link-card">
             <i class="fas fa-file-invoice-dollar"></i><span>View Payslip</span>
         </a>
-        <a href="{{ url_for('attendance.qr_code', emp_id=employee.id) }}" class="quick-link-card">
-            <i class="fas fa-qrcode"></i><span>My QR Code</span>
+        <a href="{{ url_for('chatbot.chat_page') }}" class="quick-link-card">
+            <i class="fas fa-robot"></i><span>AI Assistant</span>
+        </a>
+        <a href="{{ url_for('ml.dashboard') }}" class="quick-link-card">
+            <i class="fas fa-chart-line"></i><span>ML Predictions</span>
+        </a>
+        <a href="{{ url_for('voice.voice_agent') }}" class="quick-link-card">
+            <i class="fas fa-phone-volume"></i><span>Voice Agent</span>
         </a>
         <a href="{{ url_for('employee.notifications') }}" class="quick-link-card">
             <i class="fas fa-bell"></i><span>Notifications{% if unread %} ({{ unread }}){% endif %}</span>

@@ -1,6 +1,7 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash
+from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify
 from flask_login import login_required, current_user
-from models import db, Employee, LeaveRequest, LeaveBalance, Payroll, Notification, Attendance
+from models import db, Employee, LeaveRequest, LeaveBalance, Payroll, Notification
+from utils.decorators import role_required
 from datetime import datetime, date
 import calendar
 
@@ -17,12 +18,7 @@ def profile():
     # Unread notifications count
     unread = Notification.query.filter_by(user_id=current_user.id, is_read=False).count()
     
-    # Today's attendance
-    today_att = None
-    if emp:
-        today_att = Attendance.query.filter_by(employee_id=emp.id, date=date.today()).first()
-    
-    return render_template('employee/profile.html', employee=emp, unread=unread, today_att=today_att)
+    return render_template('employee/profile.html', employee=emp, unread=unread)
 
 
 @employee_bp.route('/leave/request', methods=['GET', 'POST'])
@@ -128,3 +124,5 @@ def notification_count():
     from flask import jsonify
     count = Notification.query.filter_by(user_id=current_user.id, is_read=False).count()
     return jsonify({'count': count})
+
+

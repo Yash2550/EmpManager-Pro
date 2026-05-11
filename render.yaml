@@ -3,9 +3,29 @@ services:
     name: empmanager-pro
     runtime: python
     buildCommand: pip install -r requirements.txt && python init_db.py
-    startCommand: gunicorn wsgi:app
+    startCommand: gunicorn wsgi:app --bind 0.0.0.0:$PORT --workers 2 --timeout 120
     envVars:
       - key: PYTHON_VERSION
-        value: 3.11.0
+        value: "3.11.0"
       - key: SECRET_KEY
         generateValue: true
+      - key: FLASK_ENV
+        value: production
+      - key: FLASK_DEBUG
+        value: "0"
+      # ── Supabase PostgreSQL ──────────────────────────
+      # Set DATABASE_URL in Render dashboard → Environment
+      - key: DATABASE_URL
+        sync: false          # means: set manually in dashboard, not synced from here
+      # ── Groq AI ─────────────────────────────────────
+      - key: GROQ_API_KEY
+        sync: false
+      - key: GROQ_MODEL
+        value: llama3-8b-8192
+      # ── Twilio ──────────────────────────────────────
+      - key: TWILIO_ACCOUNT_SID
+        sync: false
+      - key: TWILIO_AUTH_TOKEN
+        sync: false
+      - key: TWILIO_PHONE_NUMBER
+        sync: false

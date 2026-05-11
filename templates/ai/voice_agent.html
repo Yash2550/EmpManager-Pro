@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% block title %}Voice Agent — EmpManager Pro{% endblock %}
+{% block page_title %}AI Voice Agent{% endblock %}
+{% block content %}
+<div style="max-width:700px;margin:0 auto;display:flex;flex-direction:column;gap:1.5rem;">
+  <div style="text-align:center;padding:2.5rem 2rem;background:linear-gradient(135deg,#4f46e5,#7c3aed);border-radius:var(--radius);color:#fff;">
+    <div style="font-size:3.5rem;margin-bottom:1rem;"><i class="fas fa-phone-volume"></i></div>
+    <h2 style="font-size:1.6rem;font-weight:700;margin-bottom:0.5rem;">AI Voice Agent</h2>
+    <p style="opacity:0.85;font-size:0.9rem;">Send automated voice messages using Twilio TTS.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><h3><i class="fas fa-headset"></i> Make a Voice Call</h3></div>
+    <div class="card-body">
+      <div class="form-group" style="margin-bottom:1rem;">
+        <label style="display:block;font-weight:500;margin-bottom:0.4rem;">Phone Number (with country code)</label>
+        <input type="tel" id="phoneInput" class="form-control" placeholder="+91 98765 43210"
+          value="{{ employee.phone if employee and employee.phone else '' }}"
+          style="width:100%;padding:0.75rem 1rem;border:1.5px solid var(--border);border-radius:var(--radius-sm);background:var(--bg);color:var(--text);">
+      </div>
+      <div class="form-group" style="margin-bottom:1rem;">
+        <label style="display:block;font-weight:500;margin-bottom:0.4rem;">Quick Templates</label>
+        <div style="display:flex;flex-wrap:wrap;gap:0.5rem;">
+          {% for key, msg in predefined_messages.items() %}
+          <button onclick="document.getElementById('messageInput').value=`{{ msg }}`"
+            style="padding:0.4rem 0.9rem;border:1.5px solid var(--border);border-radius:2rem;background:var(--surface);color:var(--text-secondary);font-size:0.78rem;cursor:pointer;">
+            {{ key.replace('_',' ').title() }}
+          </button>
+          {% endfor %}
+        </div>
+      </div>
+      <div class="form-group" style="margin-bottom:1rem;">
+        <label style="display:block;font-weight:500;margin-bottom:0.4rem;">Custom Message</label>
+        <textarea id="messageInput" style="width:100%;padding:0.75rem 1rem;border:1.5px solid var(--border);border-radius:var(--radius-sm);background:var(--bg);color:var(--text);min-height:100px;resize:vertical;" placeholder="Type your voice message here..."></textarea>
+      </div>
+      <button id="callBtn" onclick="makeCall()"
+        style="width:100%;padding:1rem;background:linear-gradient(135deg,#10b981,#059669);color:#fff;border:none;border-radius:var(--radius);font-size:1rem;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:0.5rem;">
+        <i class="fas fa-phone"></i> Initiate Voice Call
+      </button>
+      <div id="callResult" style="display:none;margin-top:1rem;padding:1rem;border-radius:var(--radius-sm);font-size:0.88rem;"></div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function makeCall() {
+  const phone = document.getElementById('phoneInput').value.trim();
+  const message = document.getElementById('messageInput').value.trim();
+  const resultEl = document.getElementById('callResult');
+  const btn = document.getElementById('callBtn');
+  if (!phone) { alert('Please enter a phone number.'); return; }
+  if (!message) { alert('Please enter a message.'); return; }
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Calling...';
+  resultEl.style.display = 'none';
+  fetch('/voice/call', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({phone, message})
+  })
+  .then(r => r.json())
+  .then(data => {
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fas fa-phone"></i> Initiate Voice Call';
+    resultEl.style.display = 'block';
+    if (data.success) {
+      resultEl.style.background = '#d1fae5';
+      resultEl.style.border = '1px solid #10b981';
+      resultEl.style.color = '#065f46';
+      resultEl.innerHTML = '✅ <strong>Call initiated!</strong> SID: ' + data.call_sid;
+    } else {
+      resultEl.style.background = '#fee2e2';
+      resultEl.style.border = '1px solid #ef4444';
+      resultEl.style.color = '#991b1b';
+      resultEl.innerHTML = '❌ <strong>Failed:</strong> ' + data.error;
+    }
+  })
+  .catch(() => {
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fas fa-phone"></i> Initiate Voice Call';
+    resultEl.style.display = 'block';
+    resultEl.style.background = '#fee2e2';
+    resultEl.innerHTML = '❌ Network error.';
+  });
+}
+</script>
+{% endblock %}

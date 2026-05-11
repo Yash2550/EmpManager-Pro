@@ -1,8 +1,8 @@
 import os
-from flask import Flask, redirect, url_for, render_template, render_template_string
+from flask import Flask, app, redirect, url_for, render_template, render_template_string
 from flask_login import LoginManager
+from flask_migrate import Migrate
 from config import Config
-from models import db
 
 
 def create_app():
@@ -11,21 +11,25 @@ def create_app():
     
     # Ensure directories exist
     os.makedirs(app.config.get('UPLOAD_FOLDER', 'static/img/avatars'), exist_ok=True)
-    os.makedirs(app.config.get('QR_FOLDER', 'static/qrcodes'), exist_ok=True)
-    os.makedirs(os.path.join(app.static_folder, 'img'), exist_ok=True)
+    os.makedirs(os.path.join(app.root_path, 'static', 'img'), exist_ok=True)
+    os.makedirs(app.config.get('ML_MODELS_DIR', 'ml_models'), exist_ok=True)
+    
+
     
     # Init extensions
+    from models import db
     db.init_app(app)
+    migrate = Migrate(app, db)
     
     login_manager = LoginManager()
-    login_manager.init_app(app)
-    login_manager.login_view = 'auth.login'
+    login_manager.init_app(app) 
+    login_manager.login_view = 'auth.login' # type: ignore
     login_manager.login_message_category = 'warning'
     
     from models import User
     
     @login_manager.user_loader
-    def load_user(user_id):
+    def load_user(user_id): 
         return User.query.get(int(user_id))
     
     # Register blueprints
@@ -33,20 +37,28 @@ def create_app():
     from routes.admin import admin_bp
     from routes.hr import hr_bp
     from routes.attendance import attendance_bp
+
     from routes.employee import employee_bp
+    from routes.chatbot import chatbot_bp
+    from routes.ml import ml_bp
+    from routes.voice import voice_bp
     
     app.register_blueprint(auth_bp)
     app.register_blueprint(admin_bp)
     app.register_blueprint(hr_bp)
     app.register_blueprint(attendance_bp)
+
     app.register_blueprint(employee_bp)
+    app.register_blueprint(chatbot_bp)
+    app.register_blueprint(ml_bp)
+    app.register_blueprint(voice_bp)
     
     # Template context helpers
     from utils.helpers import format_currency, format_date, format_datetime, time_since
-    
+        
     @app.context_processor
     def utility_processor():
-        return dict(
+        return dict(    
             format_currency=format_currency,
             format_date=format_date,
             format_datetime=format_datetime,
@@ -58,7 +70,7 @@ def create_app():
     def index():
         return render_template('landing.html')
     
-    # Error handlers
+    # Error handlers 
     @app.errorhandler(403)
     def forbidden(e):
         return render_template_string('''
