@@ -59,7 +59,10 @@ class Config:
     SQLALCHEMY_ENGINE_OPTIONS = {
         'pool_pre_ping': True,          # drop stale connections automatically
         'pool_recycle': 300,            # recycle connections every 5 min
-        **({'connect_args': {'sslmode': 'require'}} if _is_postgres else {})
+        'connect_args': {
+            'sslmode': 'require',
+            'connect_timeout': 5        # Fail fast (5 seconds) instead of hanging
+        } if _is_postgres else {}
     }
 
     UPLOAD_FOLDER = os.path.join(BASE_DIR, 'static', 'img', 'avatars')
