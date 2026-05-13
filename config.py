@@ -50,6 +50,10 @@ def _build_db_url() -> str:
 
 class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY', 'emp-mgmt-secret-key-2026')
+    
+    # Session security for Hugging Face iFrames
+    SESSION_COOKIE_SAMESITE = 'None'
+    SESSION_COOKIE_SECURE = True
 
     SQLALCHEMY_DATABASE_URI = _build_db_url()
     SQLALCHEMY_TRACK_MODIFICATIONS = False
