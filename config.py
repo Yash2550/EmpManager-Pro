@@ -21,6 +21,10 @@ def _build_db_url() -> str:
         url = url.replace('postgres://', 'postgresql://', 1)
 
     if url:
+        # Ensure sslmode=require for PostgreSQL if not already present
+        if 'postgresql' in url and 'sslmode=' not in url:
+            separator = '&' if '?' in url else '?'
+            url = f"{url}{separator}sslmode=require"
         return url
 
     # Individual Supabase connection params (alternative)
