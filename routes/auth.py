@@ -20,7 +20,12 @@ def login():
         password = request.form.get('password', '')
         remember = request.form.get('remember', False)
         
-        user = User.query.filter_by(username=username).first()
+        try:
+            user = User.query.filter_by(username=username).first()
+        except Exception as e:
+            print(f"CRITICAL: Database connection failed: {e}")
+            flash('Database connection error. Please try again later.', 'error')
+            return render_template('auth/login.html'), 500
         
         if user and user.check_password(password):
             if not user.is_active:

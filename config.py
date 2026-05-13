@@ -16,11 +16,13 @@ def _build_db_url() -> str:
     """
     url = os.environ.get('DATABASE_URL', '')
 
-    # Render / older Heroku give 'postgres://' — SQLAlchemy needs 'postgresql://'
-    if url.startswith('postgres://'):
-        url = url.replace('postgres://', 'postgresql://', 1)
-
     if url:
+        # Support both postgres:// and postgresql:// and ensure driver is specified
+        if url.startswith('postgres://'):
+            url = url.replace('postgres://', 'postgresql+psycopg2://', 1)
+        elif url.startswith('postgresql://'):
+            url = url.replace('postgresql://', 'postgresql+psycopg2://', 1)
+            
         # Ensure sslmode=require for PostgreSQL if not already present
         if 'postgresql' in url and 'sslmode=' not in url:
             separator = '&' if '?' in url else '?'
@@ -34,7 +36,13 @@ def _build_db_url() -> str:
         password = os.environ.get('SUPABASE_PASSWORD', '')
         port = os.environ.get('SUPABASE_PORT', '5432')
         db = os.environ.get('SUPABASE_DB', 'postgres')
-        return f'postgresql://{user}:{password}@{host}:{port}/{db}'
+        try:
+            # Log connection attempt with masked password
+            masked_password = '****' if password else ''
+            print(f"DEBUG: Connecting to DB at {host}:{port} as {user}")
+        except Exception as e:
+            print(f"CRITICAL: Database connection failed: {e}")
+        return f'postgresql+psycopg2://{user}:{password}@{host}:{port}/{db}'
 
     # Local SQLite fallback
     return 'sqlite:///' + os.path.join(BASE_DIR, 'employee.db')

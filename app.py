@@ -13,6 +13,18 @@ def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
     
+    # Masked DB URL logging for debugging
+    db_url = app.config.get('SQLALCHEMY_DATABASE_URI', '')
+    if db_url and '@' in db_url:
+        try:
+            prefix, suffix = db_url.split('@', 1)
+            # Masking password in protocol://user:pass@host format
+            protocol_part = prefix.split('//', 1)[0] + '//'
+            user_part = prefix.split('//', 1)[1].split(':', 1)[0]
+            print(f"DEBUG: Database connection target: {suffix.split('/', 1)[0]} (using {protocol_part}{user_part}:****)")
+        except Exception:
+            print("DEBUG: DATABASE_URL is set but format is non-standard for masking.")
+    
     # Ensure directories exist
     os.makedirs(app.config.get('UPLOAD_FOLDER', 'static/img/avatars'), exist_ok=True)
     os.makedirs(os.path.join(app.root_path, 'static', 'img'), exist_ok=True)
