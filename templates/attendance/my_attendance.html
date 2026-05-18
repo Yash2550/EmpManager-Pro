@@ -28,7 +28,7 @@
             <select name="month" class="form-control" onchange="this.form.submit()">
                 {% for m_num, m_name in months %}
                 <option value="{{ m_num }}" {% if m_num == month %}selected{% endif %}>{{ m_name }}</option>
-                {% endfor %}
+                {% endfor %}    
             </select>
             <select name="year" class="form-control" onchange="this.form.submit()">
                 {% for y in range(year-2, year+1) %}

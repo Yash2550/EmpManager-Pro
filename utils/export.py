@@ -51,10 +51,6 @@ def export_employees_excel(employees):
     buffer.seek(0)
     return buffer
 
-
-
-
-
 def export_payroll_excel(payrolls):
     """Export payroll records to Excel. Returns BytesIO buffer."""
     wb = Workbook()

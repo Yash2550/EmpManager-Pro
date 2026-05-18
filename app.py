@@ -19,7 +19,7 @@ def create_app():
         try:
             prefix, suffix = db_url.split('@', 1)
             # Masking password in protocol://user:pass@host format
-            protocol_part = prefix.split('//', 1)[0] + '//'
+            protocol_part = prefix.split('//', 1)[0] + '//' 
             user_part = prefix.split('//', 1)[1].split(':', 1)[0]
             print(f"DEBUG: Database connection target: {suffix.split('/', 1)[0]} (using {protocol_part}{user_part}:****)")
         except Exception:
