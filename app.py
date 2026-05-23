@@ -32,6 +32,45 @@ def create_app():
     
 
     
+    # Diagnostic database connection check and fallback
+    db_url = app.config.get('SQLALCHEMY_DATABASE_URI', '')
+    if db_url and db_url.startswith('postgresql'):
+        from sqlalchemy import create_engine
+        print("DEBUG: Testing remote database connection...")
+        try:
+            # Create engine with a short timeout to avoid hanging
+            engine = create_engine(db_url, connect_args={'connect_timeout': 3})
+            with engine.connect() as conn:
+                pass
+            engine.dispose()
+            print("DEBUG: Remote database connection successful.")
+        except Exception as e:
+            print("\n" + "="*80)
+            print("CRITICAL DATABASE CONNECTION ERROR")
+            print("="*80)
+            print(f"Failed to connect to remote database: {db_url.split('@')[-1] if '@' in db_url else db_url}")
+            print(f"Error details: {e}")
+            print("-"*80)
+            
+            # Fall back to SQLite in development/debug mode or on Hugging Face Spaces
+            is_huggingface = 'SPACE_ID' in os.environ or 'SPACE_TITLE' in os.environ
+            if app.debug or os.environ.get('FLASK_ENV') == 'development' or is_huggingface:
+                sqlite_url = 'sqlite:///' + os.path.join(app.root_path, 'employee.db')
+                print(f"DEVELOPMENT FALLBACK: Switching to local SQLite database:")
+                print(f"  {sqlite_url}")
+                print("Your local database is fully seeded and ready to use!")
+                print("="*80 + "\n")
+                app.config['SQLALCHEMY_DATABASE_URI'] = sqlite_url
+                # Clear PostgreSQL-specific engine options to avoid SQLite driver TypeError
+                app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
+                    'pool_pre_ping': True,
+                    'pool_recycle': 300,
+                    'connect_args': {}
+                }
+            else:
+                print("Please check your remote database server and credentials.")
+                print("="*80 + "\n")
+
     # Init extensions
     from models import db
     db.init_app(app)
