@@ -10,9 +10,9 @@ from models import db, User, Department, Employee, LeaveRequest, LeaveBalance, P
 from datetime import datetime, date, timedelta
 import random
 
-app = create_app()
-
-def seed_data():
+def seed_data(app=None):
+    if app is None:
+        app = create_app()
     with app.app_context():
         db.drop_all()
         db.create_all()

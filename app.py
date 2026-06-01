@@ -29,7 +29,7 @@ def create_app():
     os.makedirs(app.config.get('UPLOAD_FOLDER', 'static/img/avatars'), exist_ok=True)
     os.makedirs(os.path.join(app.root_path, 'static', 'img'), exist_ok=True)
     os.makedirs(app.config.get('ML_MODELS_DIR', 'ml_models'), exist_ok=True)
-    
+
 
     
     # Diagnostic database connection check and fallback
@@ -75,6 +75,29 @@ def create_app():
     from models import db
     db.init_app(app)
     migrate = Migrate(app, db)
+    
+    # Automatically initialize and seed the database if the tables do not exist
+    with app.app_context():
+        try:
+            from sqlalchemy import inspect
+            inspector = inspect(db.engine)
+            if not inspector.has_table("users"):
+                print("\n" + "="*80)
+                print("DATABASE INITIALIZATION REQUIRED: 'users' table not found.")
+                print("="*80)
+                
+                db_url = app.config.get('SQLALCHEMY_DATABASE_URI', '')
+                if 'sqlite' in db_url:
+                    print("Detected SQLite database. Performing full database seeding with demo data...")
+                    from init_db import seed_data
+                    seed_data(app)
+                else:
+                    print("Detected remote PostgreSQL database. Performing safe database setup...")
+                    from setup_db import setup as safe_setup
+                    safe_setup(app)
+                print("="*80 + "\n")
+        except Exception as e:
+            print(f"WARNING: Automatic database initialization failed: {e}")
     
     login_manager = LoginManager()
     login_manager.init_app(app) 

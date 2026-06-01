@@ -9,9 +9,9 @@ from app import create_app
 from models import db, User, Department, Employee
 from datetime import date
 
-app = create_app()
-
-def setup():
+def setup(app=None):
+    if app is None:
+        app = create_app()
     with app.app_context():
         print("Checking database connection...")
         try:
