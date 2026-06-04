@@ -74,7 +74,7 @@ class Config:
 
     # ── AI / Groq ──────────────────────────────────
     GROQ_API_KEY = os.environ.get('GROQ_API_KEY', '')
-    GROQ_MODEL = os.environ.get('GROQ_MODEL', 'llama3-8b-8192')
+    GROQ_MODEL = os.environ.get('GROQ_MODEL', 'llama-3.1-8b-instant')
 
     # ── Twilio Voice ──────────────────────────────
     TWILIO_ACCOUNT_SID = os.environ.get('TWILIO_ACCOUNT_SID', '')

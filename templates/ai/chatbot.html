@@ -4,42 +4,290 @@
 
 {% block head %}
 <style>
-.chat-page-wrap { display:flex; flex-direction:column; height:calc(100vh - 130px); max-width:860px; margin:0 auto; }
-.chat-messages { flex:1; overflow-y:auto; padding:1.5rem; display:flex; flex-direction:column; gap:1rem; }
-.chat-msg { display:flex; gap:0.75rem; align-items:flex-start; animation:fadeSlideIn 0.3s ease; }
-.chat-msg.user { flex-direction:row-reverse; }
-@keyframes fadeSlideIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
-.chat-msg-avatar { width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.9rem; flex-shrink:0; }
-.chat-msg.assistant .chat-msg-avatar { background:linear-gradient(135deg,#7c3aed,#4f46e5); color:#fff; }
-.chat-msg.user .chat-msg-avatar { background:linear-gradient(135deg,#0ea5e9,#06b6d4); color:#fff; }
-.chat-msg-content { max-width:70%; }
-.chat-msg-bubble { padding:0.85rem 1.1rem; border-radius:1.2rem; font-size:0.9rem; line-height:1.6; word-break:break-word; }
-.chat-msg.assistant .chat-msg-bubble { background:var(--surface); border:1px solid var(--border); border-radius:0.4rem 1.2rem 1.2rem 1.2rem; }
-.chat-msg.user .chat-msg-bubble { background:linear-gradient(135deg,#4f46e5,#7c3aed); color:#fff; border-radius:1.2rem 0.4rem 1.2rem 1.2rem; }
-.chat-msg-time { font-size:0.72rem; color:var(--text-muted); margin-top:0.3rem; }
-.chat-msg.user .chat-msg-time { text-align:right; }
-.chat-input-area { padding:1rem 1.5rem; border-top:1px solid var(--border); background:var(--surface); border-radius:0 0 var(--radius) var(--radius); }
-.chat-input-row { display:flex; gap:0.75rem; align-items:center; }
-.chat-input-row input { flex:1; padding:0.85rem 1.25rem; border:1.5px solid var(--border); border-radius:2rem; background:var(--bg); color:var(--text); font-size:0.9rem; outline:none; transition:border-color 0.2s; }
-.chat-input-row input:focus { border-color:#4f46e5; }
-.chat-input-row button { width:44px; height:44px; border-radius:50%; background:linear-gradient(135deg,#4f46e5,#7c3aed); color:#fff; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:transform 0.2s,box-shadow 0.2s; }
-.chat-input-row button:hover { transform:scale(1.08); box-shadow:0 4px 12px rgba(79,70,229,0.4); }
-.chat-header-bar { display:flex; align-items:center; justify-content:space-between; padding:1rem 1.5rem; background:linear-gradient(135deg,#4f46e5,#7c3aed); border-radius:var(--radius) var(--radius) 0 0; color:#fff; }
-.chat-header-info { display:flex; align-items:center; gap:0.75rem; }
-.chat-ai-avatar { width:40px; height:40px; border-radius:50%; background:rgba(255,255,255,0.2); display:flex; align-items:center; justify-content:center; font-size:1.1rem; }
-.chat-header-name { font-weight:600; font-size:1rem; }
-.chat-header-status { font-size:0.75rem; opacity:0.8; }
-.chat-header-actions button { background:rgba(255,255,255,0.15); border:none; color:#fff; padding:0.4rem 0.9rem; border-radius:1rem; cursor:pointer; font-size:0.8rem; transition:background 0.2s; }
-.chat-header-actions button:hover { background:rgba(255,255,255,0.25); }
-.quick-chips { display:flex; flex-wrap:wrap; gap:0.5rem; padding:0.75rem 1.5rem; }
-.chip { padding:0.4rem 1rem; border-radius:2rem; background:var(--surface); border:1px solid var(--border); color:var(--text-secondary); font-size:0.78rem; cursor:pointer; transition:all 0.2s; white-space:nowrap; }
-.chip:hover { background:#4f46e5; color:#fff; border-color:#4f46e5; }
-.typing-indicator { display:none; }
-.typing-indicator.show { display:flex; }
-.typing-dot { width:8px; height:8px; border-radius:50%; background:#7c3aed; animation:typingBounce 1.2s infinite; margin:0 2px; }
-.typing-dot:nth-child(2) { animation-delay:0.2s; }
-.typing-dot:nth-child(3) { animation-delay:0.4s; }
-@keyframes typingBounce { 0%,80%,100%{transform:translateY(0)} 40%{transform:translateY(-8px)} }
+  .chat-page-wrap {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 130px);
+    max-width: 860px;
+    margin: 0 auto;
+    background: #09090b !important;
+    border: 1px solid #27272a !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4) !important;
+    border-radius: var(--radius);
+  }
+
+  .chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    background: #09090b;
+  }
+
+  .chat-msg {
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+    animation: fadeSlideIn 0.3s ease;
+  }
+
+  .chat-msg.user {
+    flex-direction: row-reverse;
+  }
+
+  @keyframes fadeSlideIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px)
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0)
+    }
+  }
+
+  .chat-msg-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+  }
+
+  .chat-msg.assistant .chat-msg-avatar {
+    background: linear-gradient(135deg, #7c3aed, #4f46e5);
+    color: #fff;
+  }
+
+  .chat-msg.user .chat-msg-avatar {
+    background: linear-gradient(135deg, #0ea5e9, #06b6d4);
+    color: #fff;
+  }
+
+  .chat-msg-content {
+    max-width: 70%;
+  }
+
+  .chat-msg-bubble {
+    padding: 0.85rem 1.1rem;
+    border-radius: 1.2rem;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    word-break: break-word;
+  }
+
+  .chat-msg.assistant .chat-msg-bubble {
+    background: #18181b;
+    border: 1px solid #27272a;
+    color: #f4f4f5;
+    border-radius: 0.4rem 1.2rem 1.2rem 1.2rem;
+  }
+
+  .chat-msg.user .chat-msg-bubble {
+    background: linear-gradient(135deg, #4f46e5, #7c3aed);
+    color: #fff;
+    border-radius: 1.2rem 0.4rem 1.2rem 1.2rem;
+  }
+
+  .chat-msg-time {
+    font-size: 0.72rem;
+    color: #71717a;
+    margin-top: 0.3rem;
+  }
+
+  .chat-msg.user .chat-msg-time {
+    text-align: right;
+  }
+
+  .chat-input-area {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid #27272a;
+    background: #09090b;
+    border-radius: 0 0 var(--radius) var(--radius);
+  }
+
+  .chat-input-row {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+  }
+
+  .chat-input-row input {
+    flex: 1;
+    padding: 0.85rem 1.25rem;
+    border: 1.5px solid #27272a;
+    border-radius: 2rem;
+    background: #18181b;
+    color: #f4f4f5;
+    font-size: 0.9rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .chat-input-row input:focus {
+    border-color: #7c3aed;
+  }
+
+  .chat-input-row button {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #4f46e5, #7c3aed);
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .chat-input-row button:hover {
+    transform: scale(1.08);
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.4);
+  }
+
+  .chat-header-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.5rem;
+    background: linear-gradient(135deg, #09090b, #18181b);
+    border-bottom: 1px solid #27272a;
+    border-radius: var(--radius) var(--radius) 0 0;
+    color: #fff;
+  }
+
+  .chat-header-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .chat-ai-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+  }
+
+  .chat-header-name {
+    font-weight: 600;
+    font-size: 1rem;
+  }
+
+  .chat-header-status {
+    font-size: 0.75rem;
+    opacity: 0.8;
+  }
+
+  .chat-header-actions button {
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: #fff;
+    padding: 0.4rem 0.9rem;
+    border-radius: 1rem;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: background 0.2s;
+  }
+
+  .chat-header-actions button:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+
+  .quick-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background: #09090b;
+    border-bottom: 1px solid #18181b;
+  }
+
+  .chip {
+    padding: 0.4rem 1rem;
+    border-radius: 2rem;
+    background: #18181b;
+    border: 1px solid #27272a;
+    color: #a1a1aa;
+    font-size: 0.78rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+
+  .chip:hover {
+    background: #4f46e5;
+    color: #fff;
+    border-color: #4f46e5;
+  }
+
+  .typing-indicator {
+    display: none;
+  }
+
+  .typing-indicator.show {
+    display: flex;
+  }
+
+  .typing-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #7c3aed;
+    animation: typingBounce 1.2s infinite;
+    margin: 0 2px;
+  }
+
+  .typing-dot:nth-child(2) {
+    animation-delay: 0.2s;
+  }
+
+  .typing-dot:nth-child(3) {
+    animation-delay: 0.4s;
+  }
+
+  @keyframes typingBounce {
+
+    0%,
+    80%,
+    100% {
+      transform: translateY(0)
+    }
+
+    40% {
+      transform: translateY(-8px)
+    }
+  }
+
+  /* Dark scrollbar styles for messages */
+  .chat-messages::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .chat-messages::-webkit-scrollbar-track {
+    background: #09090b;
+  }
+
+  .chat-messages::-webkit-scrollbar-thumb {
+    background: #27272a;
+    border-radius: 3px;
+  }
+
+  .chat-messages::-webkit-scrollbar-thumb:hover {
+    background: #3f3f46;
+  }
 </style>
 {% endblock %}
 
@@ -72,7 +320,8 @@
       <div class="chat-msg-content">
         <div class="chat-msg-bubble">
           👋 Hi <strong>{{ current_user.username }}</strong>! I'm your EmpManager AI assistant.<br><br>
-          I have access to your real-time HR data and can help with questions about your <strong>leaves, payslip, attendance, performance</strong>, and more!
+          Ask me anything! I can help you with <strong>general knowledge, coding, writing emails</strong>, or any
+          questions about your <strong>leaves, payslip, attendance, performance</strong>, and other HR data!
         </div>
         <div class="chat-msg-time">Just now</div>
       </div>
@@ -93,7 +342,8 @@
 
   <div class="chat-input-area">
     <div class="chat-input-row">
-      <input type="text" id="chatInput" placeholder="Ask me anything about your HR data..." autocomplete="off">
+      <input type="text" id="chatInput" placeholder="Ask me anything (general questions, coding, or HR info)..."
+        autocomplete="off">
       <button id="sendBtn" onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
     </div>
   </div>
@@ -102,99 +352,99 @@
 
 {% block scripts %}
 <script>
-const messagesEl = document.getElementById('chatMessages');
-const inputEl = document.getElementById('chatInput');
-const typingEl = document.getElementById('typingIndicator');
+  const messagesEl = document.getElementById('chatMessages');
+  const inputEl = document.getElementById('chatInput');
+  const typingEl = document.getElementById('typingIndicator');
 
-// Load history on page load
-window.addEventListener('DOMContentLoaded', () => {
-  fetch('/ai/chat/history')
-    .then(r => r.json())
-    .then(data => {
-      if (data.messages && data.messages.length > 0) {
-        data.messages.forEach(m => appendMessage(m.role, m.content, m.timestamp));
-        scrollBottom();
-      }
-    });
-});
-
-inputEl.addEventListener('keydown', e => {
-  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
-});
-
-function sendQuick(text) {
-  inputEl.value = text;
-  sendMessage();
-}
-
-function sendMessage() {
-  const msg = inputEl.value.trim();
-  if (!msg) return;
-
-  appendMessage('user', msg, 'Just now');
-  inputEl.value = '';
-  document.getElementById('sendBtn').disabled = true;
-
-  // Show typing
-  typingEl.classList.add('show');
-  scrollBottom();
-
-  fetch('/ai/chat/send', {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({message: msg})
-  })
-  .then(r => r.json())
-  .then(data => {
-    typingEl.classList.remove('show');
-    document.getElementById('sendBtn').disabled = false;
-    if (data.response) {
-      appendMessage('assistant', data.response, data.timestamp || 'Just now');
-    } else if (data.error) {
-      appendMessage('assistant', '⚠️ ' + data.error, 'Just now');
-    }
-    scrollBottom();
-  })
-  .catch(() => {
-    typingEl.classList.remove('show');
-    document.getElementById('sendBtn').disabled = false;
-    appendMessage('assistant', '⚠️ Something went wrong. Please try again.', 'Just now');
-    scrollBottom();
+  // Load history on page load
+  window.addEventListener('DOMContentLoaded', () => {
+    fetch('/ai/chat/history')
+      .then(r => r.json())
+      .then(data => {
+        if (data.messages && data.messages.length > 0) {
+          data.messages.forEach(m => appendMessage(m.role, m.content, m.timestamp));
+          scrollBottom();
+        }
+      });
   });
-}
 
-function appendMessage(role, content, time) {
-  const div = document.createElement('div');
-  div.className = `chat-msg ${role}`;
-  const avatarIcon = role === 'assistant' ? 'fa-robot' : 'fa-user';
-  // Convert **bold** markdown to <strong>
-  const formatted = content
-    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-    .replace(/\n/g, '<br>');
-  div.innerHTML = `
+  inputEl.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+  });
+
+  function sendQuick(text) {
+    inputEl.value = text;
+    sendMessage();
+  }
+
+  function sendMessage() {
+    const msg = inputEl.value.trim();
+    if (!msg) return;
+
+    appendMessage('user', msg, 'Just now');
+    inputEl.value = '';
+    document.getElementById('sendBtn').disabled = true;
+
+    // Show typing
+    typingEl.classList.add('show');
+    scrollBottom();
+
+    fetch('/ai/chat/send', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: msg })
+    })
+      .then(r => r.json())
+      .then(data => {
+        typingEl.classList.remove('show');
+        document.getElementById('sendBtn').disabled = false;
+        if (data.response) {
+          appendMessage('assistant', data.response, data.timestamp || 'Just now');
+        } else if (data.error) {
+          appendMessage('assistant', '⚠️ ' + data.error, 'Just now');
+        }
+        scrollBottom();
+      })
+      .catch(() => {
+        typingEl.classList.remove('show');
+        document.getElementById('sendBtn').disabled = false;
+        appendMessage('assistant', '⚠️ Something went wrong. Please try again.', 'Just now');
+        scrollBottom();
+      });
+  }
+
+  function appendMessage(role, content, time) {
+    const div = document.createElement('div');
+    div.className = `chat-msg ${role}`;
+    const avatarIcon = role === 'assistant' ? 'fa-robot' : 'fa-user';
+    // Convert **bold** markdown to <strong>
+    const formatted = content
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\n/g, '<br>');
+    div.innerHTML = `
     <div class="chat-msg-avatar"><i class="fas ${avatarIcon}"></i></div>
     <div class="chat-msg-content">
       <div class="chat-msg-bubble">${formatted}</div>
       <div class="chat-msg-time">${time}</div>
     </div>`;
-  // Insert before typing indicator
-  messagesEl.insertBefore(div, typingEl);
-  scrollBottom();
-}
+    // Insert before typing indicator
+    messagesEl.insertBefore(div, typingEl);
+    scrollBottom();
+  }
 
-function scrollBottom() {
-  messagesEl.scrollTop = messagesEl.scrollHeight;
-}
+  function scrollBottom() {
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+  }
 
-function clearHistory() {
-  if (!confirm('Clear all chat history?')) return;
-  fetch('/ai/chat/clear', {method: 'POST'})
-    .then(r => r.json())
-    .then(() => {
-      // Remove all messages except first welcome and typing indicator
-      const msgs = messagesEl.querySelectorAll('.chat-msg:not(#typingIndicator)');
-      msgs.forEach((m, i) => { if (i > 0) m.remove(); });
-    });
-}
+  function clearHistory() {
+    if (!confirm('Clear all chat history?')) return;
+    fetch('/ai/chat/clear', { method: 'POST' })
+      .then(r => r.json())
+      .then(() => {
+        // Remove all messages except first welcome and typing indicator
+        const msgs = messagesEl.querySelectorAll('.chat-msg:not(#typingIndicator)');
+        msgs.forEach((m, i) => { if (i > 0) m.remove(); });
+      });
+  }
 </script>
 {% endblock %}

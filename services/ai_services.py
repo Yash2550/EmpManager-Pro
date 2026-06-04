@@ -61,16 +61,16 @@ def chat_with_rag(user_message: str, user_id: int, user_role: str, employee_id=N
 
     context = _build_context(user_role, employee_id)
 
-    system_prompt = f"""You are EmpManager AI, a friendly and helpful HR assistant for employees.
-You have access to the following real-time data about this employee:
+    system_prompt = f"""You are EmpManager AI, a friendly, helpful, and highly intelligent general assistant for employees.
+You have access to the following real-time HR data about this employee to help answer HR-specific queries:
 
 {context}
 
 Guidelines:
-- Answer HR-related questions about leaves, payroll, attendance, performance, and company policies.
+- You are a general AI assistant. You can answer ANY question the employee asks, including general knowledge, writing emails, coding, planning, or discussing general topics.
+- When the user asks about HR-related details (like leaves, payroll, attendance, performance, and company policies), use the provided context data to give specific, accurate answers.
+- If they ask general questions unrelated to HR, answer them fully and helpfully using your broad training knowledge.
 - Be concise, accurate, and professional.
-- If data is available in the context, use it to give specific answers.
-- If something is outside your scope, politely say so.
 - Current date: {datetime.now().strftime('%d %B %Y')}
 """
 
@@ -87,7 +87,7 @@ Guidelines:
         messages.append({"role": "user", "content": user_message})
 
         response = client.chat.completions.create(
-            model=os.environ.get('GROQ_MODEL', 'llama3-8b-8192'),
+            model=os.environ.get('GROQ_MODEL', 'llama-3.1-8b-instant'),
             messages=messages,
             max_tokens=600,
             temperature=0.7
@@ -111,4 +111,4 @@ def _fallback_response(user_message: str, user_role: str, employee_id=None) -> s
         return "You can view your attendance records in the **My Attendance** section."
     if any(w in msg for w in ['hello', 'hi', 'hey', 'help']):
         return "👋 Hello! I'm your EmpManager AI assistant. I can help you with leaves, payroll, attendance, and performance queries. What would you like to know?"
-    return "I'm here to help with HR-related questions! Ask me about your leaves, payslip, attendance, or performance reviews."
+    return "⚠️ I am currently running in offline/fallback mode due to a connection issue with the AI backend. I can still guide you to features in the application (like leaves, payslip, attendance, and reviews) or try to answer general queries once connection is restored."

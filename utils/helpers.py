@@ -20,7 +20,7 @@ def format_datetime(dt, fmt='%d %b %Y, %I:%M %p'):
 
 def format_currency(amount):
     """Format a number as Indian currency."""
-    if amount is None:
+    if amount is None:  
         return '₹0.00'
     return f'₹{amount:,.2f}'
 
