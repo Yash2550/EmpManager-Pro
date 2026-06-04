@@ -1,10 +1,10 @@
 import os
 from dotenv import load_dotenv
 
-# Load .env for local development
-load_dotenv()
-
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+
+# Load .env for local development using absolute path
+load_dotenv(os.path.join(BASE_DIR, '.env'))
 
 
 def _build_db_url() -> str:
