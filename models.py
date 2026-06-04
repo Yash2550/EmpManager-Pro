@@ -39,7 +39,7 @@ class Department(db.Model):
                                 foreign_keys='Employee.department_id')
     head = db.relationship('Employee', foreign_keys=[head_id], uselist=False)
 
-# ─── Employee Model ───────────────────────────────────────────
+# ─── Employee Model ───────────────────────────────     ────────────
 class Employee(db.Model):
     __tablename__ = 'employees'
     id = db.Column(db.Integer, primary_key=True)
