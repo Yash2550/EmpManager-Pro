@@ -13,6 +13,10 @@ def make_voice_call(to_phone: str, message: str, employee_name: str = 'Employee'
         auth_token = current_app.config.get('TWILIO_AUTH_TOKEN') or os.environ.get('TWILIO_AUTH_TOKEN', '')
         from_number = current_app.config.get('TWILIO_PHONE_NUMBER') or os.environ.get('TWILIO_PHONE_NUMBER', '')
 
+        print(f"[Twilio Debug] TWILIO_ACCOUNT_SID is configured: {bool(account_sid)}")
+        print(f"[Twilio Debug] TWILIO_AUTH_TOKEN is configured: {bool(auth_token)}")
+        print(f"[Twilio Debug] TWILIO_PHONE_NUMBER is configured: {bool(from_number)}")
+
         if not all([account_sid, auth_token, from_number]):
             return {'success': False, 'error': 'Twilio credentials not configured.'}
 
