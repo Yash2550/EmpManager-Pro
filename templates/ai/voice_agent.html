@@ -3,7 +3,7 @@
 {% block page_title %}AI Voice Agent{% endblock %}
 {% block content %}
 <div style="max-width:700px;margin:0 auto;display:flex;flex-direction:column;gap:1.5rem;">
-  <div style="text-align:center;padding:2.5rem 2rem;background:linear-gradient(135deg,#4f46e5,#7c3aed);border-radius:var(--radius);color:#fff;">
+  <div style="text-align:center;padding:2.5rem 2rem;background:linear-gradient(135deg,#3b82f6,#4f46e5);border-radius:var(--radius);color:#fff;">
     <div style="font-size:3.5rem;margin-bottom:1rem;"><i class="fas fa-phone-volume"></i></div>
     <h2 style="font-size:1.6rem;font-weight:700;margin-bottom:0.5rem;">AI Voice Agent</h2>
     <p style="opacity:0.85;font-size:0.9rem;">Send automated voice messages using Twilio TTS.</p>
@@ -66,14 +66,14 @@ function makeCall() {
     btn.innerHTML = '<i class="fas fa-phone"></i> Initiate Voice Call';
     resultEl.style.display = 'block';
     if (data.success) {
-      resultEl.style.background = '#d1fae5';
-      resultEl.style.border = '1px solid #10b981';
-      resultEl.style.color = '#065f46';
+      resultEl.style.background = 'rgba(16, 185, 129, 0.15)';
+      resultEl.style.border = '1px solid rgba(16, 185, 129, 0.3)';
+      resultEl.style.color = '#34d399';
       resultEl.innerHTML = '✅ <strong>Call initiated!</strong> SID: ' + data.call_sid;
     } else {
-      resultEl.style.background = '#fee2e2';
-      resultEl.style.border = '1px solid #ef4444';
-      resultEl.style.color = '#991b1b';
+      resultEl.style.background = 'rgba(239, 68, 68, 0.15)';
+      resultEl.style.border = '1px solid rgba(239, 68, 68, 0.3)';
+      resultEl.style.color = '#f87171';
       resultEl.innerHTML = '❌ <strong>Failed:</strong> ' + data.error;
     }
   })
@@ -81,7 +81,9 @@ function makeCall() {
     btn.disabled = false;
     btn.innerHTML = '<i class="fas fa-phone"></i> Initiate Voice Call';
     resultEl.style.display = 'block';
-    resultEl.style.background = '#fee2e2';
+    resultEl.style.background = 'rgba(239, 68, 68, 0.15)';
+    resultEl.style.border = '1px solid rgba(239, 68, 68, 0.3)';
+    resultEl.style.color = '#f87171';
     resultEl.innerHTML = '❌ Network error.';
   });
 }

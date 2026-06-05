@@ -9,8 +9,8 @@
   letter-spacing: 0.02em;
   margin-left: auto;
 }
-.nav-badge.ai-badge { background: linear-gradient(135deg, #7c3aed, #4f46e5); color: #fff; }
-.nav-badge.ml-badge { background: linear-gradient(135deg, #0ea5e9, #06b6d4); color: #fff; }
+.nav-badge.ai-badge { background: linear-gradient(135deg, #4f46e5, #3f3f46); color: #fff; }
+.nav-badge.ml-badge { background: linear-gradient(135deg, #3b82f6, #475569); color: #fff; }
 
 /* Floating chat widget */
 .chat-widget {
@@ -27,7 +27,7 @@
   width: 56px;
   height: 56px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  background: linear-gradient(135deg, #3b82f6, #4f46e5);
   color: #fff;
   border: none;
   cursor: pointer;
@@ -35,7 +35,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 20px rgba(79, 70, 229, 0.45);
+  box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3);
   transition: transform 0.2s, box-shadow 0.2s;
   position: relative;
 }
@@ -48,7 +48,7 @@
   height: 14px;
   border-radius: 50%;
   background: #10b981;
-  border: 2px solid var(--bg, #0f172a);
+  border: 2px solid var(--bg, #09090b);
   animation: pulse 2s infinite;
 }
 @keyframes pulse { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.3);opacity:0.7} }
@@ -118,8 +118,8 @@
   font-size: 0.75rem;
   flex-shrink: 0;
 }
-.chat-msg.assistant .chat-msg-avatar { background: linear-gradient(135deg,#7c3aed,#4f46e5); color:#fff; }
-.chat-msg.user .chat-msg-avatar { background: linear-gradient(135deg,#0ea5e9,#06b6d4); color:#fff; }
+.chat-msg.assistant .chat-msg-avatar { background: linear-gradient(135deg,#4f46e5,#6366f1); color:#fff; }
+.chat-msg.user .chat-msg-avatar { background: linear-gradient(135deg,#3b82f6,#0ea5e9); color:#fff; }
 .chat-msg-content { max-width: 80%; }
 .chat-msg-bubble {
   padding: 0.55rem 0.8rem;
@@ -135,7 +135,7 @@
   border-radius: 0.3rem 1rem 1rem 1rem;
 }
 .chat-msg.user .chat-msg-bubble {
-  background: linear-gradient(135deg,#4f46e5,#7c3aed);
+  background: linear-gradient(135deg,#3b82f6,#4f46e5);
   color: #fff;
   border-radius: 1rem 0.3rem 1rem 1rem;
 }
@@ -158,12 +158,12 @@
   font-size: 0.82rem;
   outline: none;
 }
-.chat-widget-input input:focus { border-color: #7c3aed; }
+.chat-widget-input input:focus { border-color: #3b82f6; }
 .chat-widget-input button {
   width: 34px;
   height: 34px;
   border-radius: 50%;
-  background: linear-gradient(135deg,#4f46e5,#7c3aed);
+  background: linear-gradient(135deg,#3b82f6,#4f46e5);
   color: #fff;
   border: none;
   cursor: pointer;
